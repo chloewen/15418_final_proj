@@ -8,7 +8,7 @@
 
 <h3>Background</h3>
 <p>Unblock Me is a puzzle where a user is given a board of blocks, with one horizontal red block on the very left of the board and a hole on that row on the right wall. The user's goal is to shift the other blocks around to create a path for the red block to go through the hole. </p> 
-<img src="https://play.google.com/store/apps/details?id=com.kiragames.unblockmefree&hl=en_US"><img/>
+<img src="https://www.thanassis.space/unblock.jpg"><img/>
 <p>One of the goals of the game is to solve it in as few moves as possible, which means that our solver has an optimal return condition. Parallelization would help the solver because this game tree has a large branching factor, since at every step we can (if possible) move any block in any direction. For complicated puzzles with a high maximum depth, these trees could get really big. By creating the tree in parallel, we can greatly reduce this computational intensity and hopefully achieve a significant speedup to a naive, sequential solver. </p>
 
 <h3>The Challenge</h3>
