@@ -7,7 +7,7 @@ public:
   Board(std::vector<Block> blocks, std::vector<std::tuple<int, char, int>> prevMoves);
   bool isSolved();
   Board move(int id, int dist);
-  Board[] getNextBoards();
+  std::vector<Board> getNextBoards();
 }
 
 #endif //UNBLOCK_ME_SOLVER_BOARD_H
