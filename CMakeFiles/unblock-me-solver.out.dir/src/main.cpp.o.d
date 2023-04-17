@@ -157,4 +157,6 @@ CMakeFiles/unblock-me-solver.out.dir/src/main.cpp.o: \
  /usr/include/c++/11/bits/invoke.h /usr/include/c++/11/iostream \
  /afs/andrew.cmu.edu/usr20/chloewen/private/15418/15418_final_proj/src/Solver.h \
  /afs/andrew.cmu.edu/usr20/chloewen/private/15418/15418_final_proj/src/Board.h \
- /afs/andrew.cmu.edu/usr20/chloewen/private/15418/15418_final_proj/src/Block.h
+ /afs/andrew.cmu.edu/usr20/chloewen/private/15418/15418_final_proj/src/Block.h \
+ /usr/include/c++/11/deque /usr/include/c++/11/bits/stl_deque.h \
+ /usr/include/c++/11/bits/deque.tcc
