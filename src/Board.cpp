@@ -7,8 +7,16 @@
 
 Board::Board(std::vector<Block> blocks, std::vector<std::tuple<int, char, int>> prevMoves)
 {
-    blocks = blocks;
-    prevMoves = prevMoves;
+    this->blocks = blocks;
+    this->prevMoves = prevMoves;
+}
+
+Board::Board()
+{
+    std::vector<Block> blocks;
+    std::vector<std::tuple<int, char, int>> prevMoves;
+    this->blocks = blocks;
+    this->prevMoves = prevMoves;
 }
 
 bool Board::isSolved()

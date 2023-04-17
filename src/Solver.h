@@ -4,10 +4,14 @@
 #include "Board.h"
 #include <vector>
 
-class Solver {
+class Solver
+{
 public:
   Solver(Board startingBoard);
   std::vector<std::tuple<int, char, int>> solveBFS();
+
+private:
+  Board startingBoard;
 };
 
 #endif //UNBLOCK_ME_SOLVER_SOLVER_H
