@@ -5,12 +5,13 @@
 #include <tuple>
 #include "Block.h"
 
-class Board {
+class Board
+{
 public:
   // prevMoves is vector of tuples (id, direction, dist)
   Board(std::vector<Block> blocks, std::vector<std::tuple<int, char, int>> prevMoves);
   bool isSolved();
-  Board move(int id, int dist, char direction);
+  Block move(int id, int dist, char direction);
   std::vector<Board> getNextBoards();
 
 private:
@@ -18,6 +19,9 @@ private:
   bool collideAny(Block b);
   bool blockInBounds(Block b);
   bool canMove(int id, int dist, char direction);
-  void getNextBoardsInOneDirection(char direction, int displ, int i, std::vector<std::tuple<int, char, int>> *nextBoards);
+
+  void getNextBoardsInOneDirection(char direction, int displ, int i, std::vector<Board> nextBoards);
+  std::vector<Block> blocks;
+  std::vector<std::tuple<int, char, int>> prevMoves;
 };
 #endif //UNBLOCK_ME_SOLVER_BOARD_H
