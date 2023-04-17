@@ -1,11 +1,13 @@
 #include "Solver.h"
 #include "Board.h"
+#include <vector>
+#include <tuple>
 
 Solver::Solver(Board startingBoard) {
   this->startingBoard = startingBoard;
 }
 
-Board solveBFS() {
+std::vector<std::tuple<int, char, int>> Solver::solveBFS() {
   std::set<Board> explored;
   std::set<Board> frontierSet; 
   std::queue<Board> frontier;
