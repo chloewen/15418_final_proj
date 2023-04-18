@@ -1,12 +1,13 @@
 #include "Solver.h"
 #include "Board.h"
 #include "Block.h"
+#include "globals.h"
 #include <vector>
 #include <tuple>
 #include <set>
 #include <deque>
 #include <iostream>
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
 
 Solver::Solver(Board startingBoard)
@@ -19,20 +20,34 @@ bool Solver::vecEqual(std::vector<Block> B1, std::vector<Block> B2) {
   for (int i = 0; i < B1.size(); i++) {
     Block b1 = B1[i];
     Block b2 = B2[i];
-    if (b1.TL_x == b2.TL_x 
-        && b1.TL_y == b2.TL_y 
-        && b1.length == b2.length
-        && b1.orientation == b2.orientation) return true;
+    if (b1.TL_x != b2.TL_x 
+        || b1.TL_y != b2.TL_y 
+        || b1.length != b2.length
+        || b1.orientation != b2.orientation) return false;
   }
-  return false;
+  return true;
 }
+
+void printDeque(std::deque<Board> Q) {
+  for (int i = 0; i < Q.size(); i++) {
+    Q[i].printBoard();
+  }
+}
+
 bool Solver::isIn(std::deque<Board> Q, Board x) {
   for (int i = 0; i < Q.size(); i++) {
     Board b = Q[i];
-    if (vecEqual(b.blocks, x.blocks)) return true;
+    if (vecEqual(b.blocks, x.blocks)) {
+      // std::cout << "found equal boards (apparently)" << std::endl;
+      // b.printBoard();
+      // x.printBoard();
+      return true;
+    }
   }
   return false;
 }
+
+
 
 std::vector<std::tuple<int, char, int>> Solver::solveBFS()
 { 
@@ -42,18 +57,26 @@ std::vector<std::tuple<int, char, int>> Solver::solveBFS()
   frontier.push_back(this->startingBoard);
   while (true)
   {
+    printDeque(frontier);
     if (frontier.empty()) return empty;
     Board currBoard = frontier.front();
     frontier.pop_front();
-    if (currBoard.isSolved()) return currBoard.prevMoves;
+    if (currBoard.isSolved()) {
+      std::cout << "solution board" << std::endl;
+      currBoard.printBoard();
+      return currBoard.prevMoves;
+    }
     if (!isIn(explored,currBoard))
     {
       explored.push_back(currBoard);
       std::vector<Board> nextBoards = currBoard.getNextBoards();
-      std::cout << nextBoards.size() << std::endl;
+      std::cout << "nextBoard.size(): " << nextBoards.size() << std::endl;
       for (int i = 0; i < nextBoards.size(); i++)
       {
         Board nextBoard = nextBoards[i];
+        // std::cout << "nextBoards " << i << std::endl;
+        // nextBoard.printBoard();
+        // std::cout << !isIn(explored, nextBoard) << !isIn(frontier,nextBoard) << std::endl;
         if (!isIn(explored, nextBoard) && !isIn(frontier,nextBoard))
         {
           frontier.push_back(nextBoard);

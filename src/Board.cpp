@@ -24,7 +24,8 @@ bool Board::isSolved()
 {
     for (int i = 1; i < (this->blocks).size(); i++)
     {
-        if ((this->blocks)[i].TL_y == HOLE_Y)
+        Block b = (this->blocks)[i];
+        if (b.TL_y <= HOLE_Y && HOLE_Y < b.TL_y + b.length)
             return false;
     }
     return true;
@@ -119,6 +120,12 @@ Block Board::move(int id, int dist, char direction)
     return b;
 }
 
+void printVectorMoves(std::vector<std::tuple<int, char, int> > V) {
+    for (int i = 0; i < V.size(); i++) {
+        std::cout << "id: " << std::get<0>(V[i]) << ", direction: " << std::get<1>(V[i]) << ", distance: " << std::get<2>(V[i]);
+    }
+}
+
 // returns false if there was a collision, true otherwise
 bool Board::getNextBoardsInOneDirection(int i, int dist, char direction, std::vector<Board> *nextBoards)
 {
@@ -128,7 +135,11 @@ bool Board::getNextBoardsInOneDirection(int i, int dist, char direction, std::ve
         newBlocks[i] = move(i, dist, direction); // TODO: IS THIS ALIASED????????????????????????
         std::vector<std::tuple<int, char, int>> newPrevMoves = this->prevMoves;
         newPrevMoves.push_back(std::make_tuple(i, direction, dist)); // TODO: IS THIS ALIASED????????????????????????
-        (*nextBoards).push_back(Board(newBlocks, newPrevMoves));
+        // std::cout << "newPrevMoves" << std::endl;
+        // printVectorMoves(newPrevMoves);
+        Board newB = Board(newBlocks, newPrevMoves);
+        newB.printBoard();
+        (*nextBoards).push_back(newB);
         return true;
     }
     return false;
@@ -179,14 +190,6 @@ std::vector<Board> Board::getNextBoards()
             }
         }
     }
-    // std::cout << (nextBoards.size()) << std::endl;
-    // std::cout << "Current Board" << std::endl;
-    // (this)->printBoard();
-    
-    // for (int i = 0; i < nextBoards.size(); i++) {
-    //     std::cout << "Next Board " << i << std::endl;
-    //     (nextBoards[i]).printBoard();
-    // }
     return nextBoards;
 }
 

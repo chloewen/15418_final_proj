@@ -33,6 +33,7 @@ int main(int argc, char *argv[]) {
 
     Solver s = Solver(startingBoard);
     std::vector<std::tuple<int, char, int>> soln = s.solveBFS();
+    std::cout << "soln.size() " << soln.size() << std::endl;
 
     // write soln to console
     for (int i = 0; i < soln.size(); i++) {
