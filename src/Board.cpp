@@ -126,7 +126,7 @@ Block Board::move(int id, int dist, char direction)
     return b;
 }
 
-void Board::getNextBoardsInOneDirection(int i, int dist, char direction, std::vector<Board> *nextBoards)
+bool Board::getNextBoardsInOneDirection(int i, int dist, char direction, std::vector<Board> *nextBoards)
 {
     // std::cout << "direction: " << direction << ", dist: " << dist << ", i: " << i << std::endl; 
     if (canMove(i, dist, direction))
@@ -137,7 +137,9 @@ void Board::getNextBoardsInOneDirection(int i, int dist, char direction, std::ve
         std::vector<std::tuple<int, char, int>> newPrevMoves = this->prevMoves;
         newPrevMoves.push_back(std::make_tuple(i, direction, dist)); // TODO: IS THIS ALIASED????????????????????????
         (*nextBoards).push_back(Board(newBlocks, newPrevMoves));
+        return true;
     }
+    return false;
 }
 
 void Board::printBoard() {
@@ -150,9 +152,9 @@ void Board::printBoard() {
 std::vector<Board> Board::getNextBoards()
 {
     std::vector<Board> nextBoards;
-    // int i = 3; 
-    // if (i == 3)
-    for (int i = 0; i < (this->blocks).size(); i++)
+    int i = 2; 
+    if (i == 2)
+    // for (int i = 0; i < (this->blocks).size(); i++)
     {
         // std::cout << "moving block " << i << std::endl;
         Block b = (this->blocks)[i];
@@ -161,13 +163,16 @@ std::vector<Board> Board::getNextBoards()
             for (int dx = 1; dx < BOARD_WIDTH - b.length; dx++)
             {
                 // std::cout << "dx " << dx << std::endl;
-                getNextBoardsInOneDirection(i, dx, 'L', &nextBoards); // try to go left
+                if (!getNextBoardsInOneDirection(i, dx, 'L', &nextBoards)) break; // try to go left
                 // std::cout << "going left " << std::endl;
                 // for (int i = 0; i < nextBoards.size(); i++) {
                 //     std::cout << "Next Board " << i << std::endl;
                 //     (nextBoards[i]).printBoard();
                 // }
-                getNextBoardsInOneDirection(i, dx, 'R', &nextBoards); // try to go right
+            }
+            for (int dx = 1; dx < BOARD_WIDTH - b.length; dx++)
+            {
+                if (!getNextBoardsInOneDirection(i, dx, 'R', &nextBoards)) break; // try to go right
                 // std::cout << "going right " << std::endl;
                 // for (int i = 0; i < nextBoards.size(); i++) {
                 //     std::cout << "Next Board " << i << std::endl;
@@ -183,13 +188,16 @@ std::vector<Board> Board::getNextBoards()
             for (int dy = 1; dy < BOARD_HEIGHT - b.length; dy++)
             {
                 // std::cout << "dy " << dy << std::endl;
-                getNextBoardsInOneDirection(i, dy, 'U', &nextBoards); // try to go up
+                if (!getNextBoardsInOneDirection(i, dy, 'U', &nextBoards)) break; // try to go up
                 // std::cout << "going up " << std::endl;
                 // for (int i = 0; i < nextBoards.size(); i++) {
                 //     std::cout << "Next Board " << i << std::endl;
                 //     (nextBoards[i]).printBoard();
                 // }
-                getNextBoardsInOneDirection(i, dy, 'D', &nextBoards); // try to go down
+            }
+            for (int dy = 1; dy < BOARD_HEIGHT - b.length; dy++)
+            {
+                if (!getNextBoardsInOneDirection(i, dy, 'D', &nextBoards)) break; // try to go down
                 // std::cout << "going down " << std::endl;
                 // for (int i = 0; i < nextBoards.size(); i++) {
                 //     std::cout << "Next Board " << i << std::endl;

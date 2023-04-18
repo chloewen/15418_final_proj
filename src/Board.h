@@ -24,6 +24,6 @@ private:
   bool blockInBounds(Block b);
   bool canMove(int id, int dist, char direction);
 
-  void getNextBoardsInOneDirection(int i, int dist, char direction, std::vector<Board> *nextBoards);
+  bool getNextBoardsInOneDirection(int i, int dist, char direction, std::vector<Board> *nextBoards);
 };
 #endif //UNBLOCK_ME_SOLVER_BOARD_H
