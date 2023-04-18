@@ -17,8 +17,6 @@ Solver::Solver(Board startingBoard, std::ofstream *outputFileP)
   this->outputFileP = outputFileP;
 }
 
-
-
 bool Solver::vecEqual(std::vector<Block> B1, std::vector<Block> B2) {
   if (B1.size() != B2.size()) return false;
   for (int i = 0; i < B1.size(); i++) {
@@ -42,16 +40,11 @@ bool Solver::isIn(std::deque<Board> Q, Board x) {
   for (int i = 0; i < Q.size(); i++) {
     Board b = Q[i];
     if (vecEqual(b.blocks, x.blocks)) {
-      // std::cout << "found equal boards (apparently)" << std::endl;
-      // b.printBoard();
-      // x.printBoard();
       return true;
     }
   }
   return false;
 }
-
-
 
 std::vector<std::tuple<int, char, int>> Solver::solveBFS()
 { 
@@ -59,11 +52,8 @@ std::vector<std::tuple<int, char, int>> Solver::solveBFS()
   std::deque<Board> explored;
   std::deque<Board> frontier;
   frontier.push_back(this->startingBoard);
-  // int i = 0;
-  while (true) // (i < 2)
+  while (true) 
   {
-    // *this->outputFileP << "frontier" << std::endl;
-    // printDeque(frontier);
     if (frontier.empty()) return empty;
     Board currBoard = frontier.front();
     frontier.pop_front();
@@ -79,16 +69,12 @@ std::vector<std::tuple<int, char, int>> Solver::solveBFS()
       for (int i = 0; i < nextBoards.size(); i++)
       {
         Board nextBoard = nextBoards[i];
-        // *this->outputFileP << "nextBoards " << i << std::endl;
-        // nextBoard.printBoard(this->outputFileP);
-        // *this->outputFileP << !isIn(explored, nextBoard) << !isIn(frontier,nextBoard) << std::endl;
         if (!isIn(explored, nextBoard) && !isIn(frontier,nextBoard))
         {
           frontier.push_back(nextBoard);
         }
       }
     }
-    // i++;
   }
   return empty;
 }

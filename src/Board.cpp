@@ -98,7 +98,6 @@ bool Board::canMove(int id, int dist, char direction)
 {
     bool isValid;
     Block newB = move(id, dist, direction);
-    // need check: doesn't run into a wall or another block 
     return blockInBounds(newB) && !collideAny(newB);
 }
 
@@ -138,13 +137,10 @@ bool Board::getNextBoardsInOneDirection(int i, int dist, char direction, std::ve
     if (canMove(i, dist, direction))
     {
         std::vector<Block> newBlocks = this->blocks;
-        newBlocks[i] = move(i, dist, direction); // TODO: IS THIS ALIASED????????????????????????
+        newBlocks[i] = move(i, dist, direction); 
         std::vector<std::tuple<int, char, int>> newPrevMoves = this->prevMoves;
-        newPrevMoves.push_back(std::make_tuple(i, direction, dist)); // TODO: IS THIS ALIASED????????????????????????
-        // std::cout << "newPrevMoves" << std::endl;
-        // printVectorMoves(newPrevMoves);
+        newPrevMoves.push_back(std::make_tuple(i, direction, dist));
         Board newB = Board(newBlocks, newPrevMoves);
-        // newB.printBoard();
         (*nextBoards).push_back(newB);
         return true;
     }
@@ -186,10 +182,6 @@ void Board::printBoard(std::ofstream *outputFileP) {
     *outputFileP << "  "; 
     for (int x = 0; x < BOARD_WIDTH; x++) { *outputFileP << "--"; }
     *outputFileP << std::endl; 
-    // for (int i = 0; i < this->blocks.size(); i++) {
-    //     Block b = (this->blocks)[i];
-    //     b.printBlock();
-    // }
 }
 
 std::vector<Board> Board::getNextBoards()
