@@ -7,13 +7,17 @@
 #include <set>
 #include <deque>
 #include <iostream>
+#include <fstream>
 #include <bits/stdc++.h>
 using namespace std;
 
-Solver::Solver(Board startingBoard)
+Solver::Solver(Board startingBoard, std::ofstream *outputFileP)
 {
   this->startingBoard = startingBoard;
+  this->outputFileP = outputFileP;
 }
+
+
 
 bool Solver::vecEqual(std::vector<Block> B1, std::vector<Block> B2) {
   if (B1.size() != B2.size()) return false;
@@ -28,9 +32,9 @@ bool Solver::vecEqual(std::vector<Block> B1, std::vector<Block> B2) {
   return true;
 }
 
-void printDeque(std::deque<Board> Q) {
+void Solver::printDeque(std::deque<Board> Q) {
   for (int i = 0; i < Q.size(); i++) {
-    Q[i].printBoard();
+    Q[i].printBoard(this->outputFileP);
   }
 }
 
@@ -55,34 +59,36 @@ std::vector<std::tuple<int, char, int>> Solver::solveBFS()
   std::deque<Board> explored;
   std::deque<Board> frontier;
   frontier.push_back(this->startingBoard);
-  while (true)
+  // int i = 0;
+  while (true) // (i < 2)
   {
-    printDeque(frontier);
+    // *this->outputFileP << "frontier" << std::endl;
+    // printDeque(frontier);
     if (frontier.empty()) return empty;
     Board currBoard = frontier.front();
     frontier.pop_front();
     if (currBoard.isSolved()) {
-      std::cout << "solution board" << std::endl;
-      currBoard.printBoard();
+      *this->outputFileP << "solution board" << std::endl;
+      currBoard.printBoard(this->outputFileP);
       return currBoard.prevMoves;
     }
     if (!isIn(explored,currBoard))
     {
       explored.push_back(currBoard);
       std::vector<Board> nextBoards = currBoard.getNextBoards();
-      std::cout << "nextBoard.size(): " << nextBoards.size() << std::endl;
       for (int i = 0; i < nextBoards.size(); i++)
       {
         Board nextBoard = nextBoards[i];
-        // std::cout << "nextBoards " << i << std::endl;
-        // nextBoard.printBoard();
-        // std::cout << !isIn(explored, nextBoard) << !isIn(frontier,nextBoard) << std::endl;
+        // *this->outputFileP << "nextBoards " << i << std::endl;
+        // nextBoard.printBoard(this->outputFileP);
+        // *this->outputFileP << !isIn(explored, nextBoard) << !isIn(frontier,nextBoard) << std::endl;
         if (!isIn(explored, nextBoard) && !isIn(frontier,nextBoard))
         {
           frontier.push_back(nextBoard);
         }
       }
     }
+    // i++;
   }
   return empty;
 }

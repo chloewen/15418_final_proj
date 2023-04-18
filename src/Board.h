@@ -4,6 +4,7 @@
 #include <vector>
 #include <tuple>
 #include "Block.h"
+#include <iostream>
 
 class Board
 {
@@ -16,7 +17,7 @@ public:
   std::vector<Board> getNextBoards();
   std::vector<Block> blocks;
   std::vector<std::tuple<int, char, int>> prevMoves;
-  void printBoard();
+  void printBoard(std::ofstream *outputFileP);
 
 private:
   bool collideTwo(Block b1, Block b2);

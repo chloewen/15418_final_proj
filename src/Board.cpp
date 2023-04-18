@@ -5,6 +5,7 @@
 #include <tuple>
 #include <cassert>
 #include <iostream>
+#include <fstream>
 
 Board::Board(std::vector<Block> blocks, std::vector<std::tuple<int, char, int>> prevMoves)
 {
@@ -25,8 +26,13 @@ bool Board::isSolved()
     for (int i = 1; i < (this->blocks).size(); i++)
     {
         Block b = (this->blocks)[i];
-        if (b.TL_y <= HOLE_Y && HOLE_Y < b.TL_y + b.length)
-            return false;
+        if (b.orientation == 'v'){
+            if (b.TL_y <= HOLE_Y && HOLE_Y < b.TL_y + b.length)
+                return false;
+        } else {
+            assert(b.orientation == 'h');
+            if (b.TL_y == HOLE_Y) return false; 
+        }
     }
     return true;
 }
@@ -138,18 +144,52 @@ bool Board::getNextBoardsInOneDirection(int i, int dist, char direction, std::ve
         // std::cout << "newPrevMoves" << std::endl;
         // printVectorMoves(newPrevMoves);
         Board newB = Board(newBlocks, newPrevMoves);
-        newB.printBoard();
+        // newB.printBoard();
         (*nextBoards).push_back(newB);
         return true;
     }
     return false;
 }
 
-void Board::printBoard() {
-    for (int i = 0; i < this->blocks.size(); i++) {
-        Block b = (this->blocks)[i];
-        b.printBlock();
+void Board::printBoard(std::ofstream *outputFileP) {
+    *outputFileP << "  "; 
+    for (int x = 0; x < BOARD_WIDTH; x++) { *outputFileP << x << " "; }
+    *outputFileP << std::endl; 
+    *outputFileP << "  "; 
+    for (int x = 0; x < BOARD_WIDTH; x++) { *outputFileP << "--"; }
+    *outputFileP << std::endl; 
+    for (int y = 0; y < BOARD_HEIGHT; y++) {
+        *outputFileP << y << "|";
+        for (int x = 0; x < BOARD_WIDTH; x++) {
+            bool hasBlock = false;
+            for (int i = 0; i < this->blocks.size(); i++) {
+                Block b = (this->blocks)[i];
+                if (b.orientation == 'h') {
+                    if (b.TL_y == y && b.TL_x <= x && x < b.TL_x + b.length) {
+                        *outputFileP << i;
+                        hasBlock = true;
+                    }
+                } else {
+                    assert(b.orientation == 'v');
+                    if (b.TL_x == x && b.TL_y <= y && y < b.TL_y + b.length) {
+                        *outputFileP << i;
+                        hasBlock = true;
+                    }
+                }
+            }
+            if (!hasBlock) *outputFileP << " ";
+            *outputFileP << " ";
+        }
+        if (y != HOLE_Y) {*outputFileP << "|" << std::endl;}
+        else {*outputFileP << std::endl;}
     }
+    *outputFileP << "  "; 
+    for (int x = 0; x < BOARD_WIDTH; x++) { *outputFileP << "--"; }
+    *outputFileP << std::endl; 
+    // for (int i = 0; i < this->blocks.size(); i++) {
+    //     Block b = (this->blocks)[i];
+    //     b.printBlock();
+    // }
 }
 
 std::vector<Board> Board::getNextBoards()
