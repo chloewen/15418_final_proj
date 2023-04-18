@@ -35,23 +35,22 @@ bool Solver::isIn(std::deque<Board> Q, Board x) {
 }
 
 std::vector<std::tuple<int, char, int>> Solver::solveBFS()
-{
+{ 
   std::vector<std::tuple<int, char, int>> empty;
   std::deque<Board> explored;
   std::deque<Board> frontier;
   frontier.push_back(this->startingBoard);
   while (true)
   {
-    if (frontier.empty())
-      return empty;
+    if (frontier.empty()) return empty;
     Board currBoard = frontier.front();
     frontier.pop_front();
-    if (currBoard.isSolved())
-      return currBoard.prevMoves;
+    if (currBoard.isSolved()) return currBoard.prevMoves;
     if (!isIn(explored,currBoard))
     {
       explored.push_back(currBoard);
       std::vector<Board> nextBoards = currBoard.getNextBoards();
+      std::cout << nextBoards.size() << std::endl;
       for (int i = 0; i < nextBoards.size(); i++)
       {
         Board nextBoard = nextBoards[i];

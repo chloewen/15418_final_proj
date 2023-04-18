@@ -10,5 +10,6 @@ public:
   int TL_y;
   int length;
   char orientation;
+  void printBlock();
 };
 #endif //UNBLOCK_ME_SOLVER_BLOCK_H
