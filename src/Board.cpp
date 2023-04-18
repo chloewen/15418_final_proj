@@ -32,7 +32,6 @@ bool Board::isSolved()
 
 bool Board::collideTwo(Block b1, Block b2)
 {
-    // b1.printBlock(); b2.printBlock();
     assert(b1.id != b2.id);
     if (b1.orientation == 'h')
     {
@@ -68,10 +67,7 @@ bool Board::collideAny(Block b)
 {
     for (int i = 0; i < (this->blocks).size(); i++)
     {
-        if (b.id != i && collideTwo(b, (this->blocks)[i])){
-            // std::cout << "b.id: " << b.id << ", i: " << i << std::endl; 
-            return true;
-        }
+        if (b.id != i && collideTwo(b, (this->blocks)[i])) return true;
     }
     return false;
 }
@@ -95,10 +91,7 @@ bool Board::canMove(int id, int dist, char direction)
 {
     bool isValid;
     Block newB = move(id, dist, direction);
-    // std::cout << "newB" << std::endl;
-    // newB.printBlock(); 
-    // std::cout << blockInBounds(newB) << !collideAny(newB) << std::endl;
-    // need check: doesn't run into a wall or another block ON THE WAY (TODO)
+    // need check: doesn't run into a wall or another block 
     return blockInBounds(newB) && !collideAny(newB);
 }
 
@@ -126,12 +119,11 @@ Block Board::move(int id, int dist, char direction)
     return b;
 }
 
+// returns false if there was a collision, true otherwise
 bool Board::getNextBoardsInOneDirection(int i, int dist, char direction, std::vector<Board> *nextBoards)
 {
-    // std::cout << "direction: " << direction << ", dist: " << dist << ", i: " << i << std::endl; 
     if (canMove(i, dist, direction))
     {
-        // std::cout << "can move true" << std::endl;
         std::vector<Block> newBlocks = this->blocks;
         newBlocks[i] = move(i, dist, direction); // TODO: IS THIS ALIASED????????????????????????
         std::vector<std::tuple<int, char, int>> newPrevMoves = this->prevMoves;
@@ -152,68 +144,49 @@ void Board::printBoard() {
 std::vector<Board> Board::getNextBoards()
 {
     std::vector<Board> nextBoards;
-    int i = 2; 
-    if (i == 2)
-    // for (int i = 0; i < (this->blocks).size(); i++)
+    for (int i = 0; i < (this->blocks).size(); i++)
     {
-        // std::cout << "moving block " << i << std::endl;
         Block b = (this->blocks)[i];
         if (b.orientation == 'h')
         {
-            for (int dx = 1; dx < BOARD_WIDTH - b.length; dx++)
+            // try to go left
+            for (int dx = 1; dx <= b.TL_x; dx++)
             {
-                // std::cout << "dx " << dx << std::endl;
-                if (!getNextBoardsInOneDirection(i, dx, 'L', &nextBoards)) break; // try to go left
-                // std::cout << "going left " << std::endl;
-                // for (int i = 0; i < nextBoards.size(); i++) {
-                //     std::cout << "Next Board " << i << std::endl;
-                //     (nextBoards[i]).printBoard();
-                // }
+                // increment distance by one. If collision, stop 
+                if (!getNextBoardsInOneDirection(i, dx, 'L', &nextBoards)) break; 
             }
-            for (int dx = 1; dx < BOARD_WIDTH - b.length; dx++)
+            // try to go right
+            for (int dx = 1; dx <= BOARD_WIDTH - (b.TL_x + b.length); dx++)
             {
-                if (!getNextBoardsInOneDirection(i, dx, 'R', &nextBoards)) break; // try to go right
-                // std::cout << "going right " << std::endl;
-                // for (int i = 0; i < nextBoards.size(); i++) {
-                //     std::cout << "Next Board " << i << std::endl;
-                //     (nextBoards[i]).printBoard();
-                // }
+                // increment distance by one. If collision, stop 
+                if (!getNextBoardsInOneDirection(i, dx, 'R', &nextBoards)) break; 
             }
         }
         else
         {
             assert(b.orientation == 'v');
-            // int dy = 1;
-            // if (dy == 1)
-            for (int dy = 1; dy < BOARD_HEIGHT - b.length; dy++)
+            // try to go up
+            for (int dy = 1; dy <= b.TL_y; dy++)
             {
-                // std::cout << "dy " << dy << std::endl;
-                if (!getNextBoardsInOneDirection(i, dy, 'U', &nextBoards)) break; // try to go up
-                // std::cout << "going up " << std::endl;
-                // for (int i = 0; i < nextBoards.size(); i++) {
-                //     std::cout << "Next Board " << i << std::endl;
-                //     (nextBoards[i]).printBoard();
-                // }
+                // increment distance by one. If collision, stop 
+                if (!getNextBoardsInOneDirection(i, dy, 'U', &nextBoards)) break; 
             }
-            for (int dy = 1; dy < BOARD_HEIGHT - b.length; dy++)
+            // try to go down
+            for (int dy = 1; dy <= BOARD_HEIGHT - (b.TL_y + b.length); dy++)
             {
-                if (!getNextBoardsInOneDirection(i, dy, 'D', &nextBoards)) break; // try to go down
-                // std::cout << "going down " << std::endl;
-                // for (int i = 0; i < nextBoards.size(); i++) {
-                //     std::cout << "Next Board " << i << std::endl;
-                //     (nextBoards[i]).printBoard();
-                // }
+                // increment distance by one. If collision, stop 
+                if (!getNextBoardsInOneDirection(i, dy, 'D', &nextBoards)) break; 
             }
         }
     }
-    std::cout << (nextBoards.size()) << std::endl;
-    std::cout << "Current Board" << std::endl;
-    (this)->printBoard();
+    // std::cout << (nextBoards.size()) << std::endl;
+    // std::cout << "Current Board" << std::endl;
+    // (this)->printBoard();
     
-    for (int i = 0; i < nextBoards.size(); i++) {
-        std::cout << "Next Board " << i << std::endl;
-        (nextBoards[i]).printBoard();
-    }
+    // for (int i = 0; i < nextBoards.size(); i++) {
+    //     std::cout << "Next Board " << i << std::endl;
+    //     (nextBoards[i]).printBoard();
+    // }
     return nextBoards;
 }
 
