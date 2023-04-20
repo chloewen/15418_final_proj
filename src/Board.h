@@ -9,14 +9,14 @@
 class Board
 {
 public:
-  // prevMoves is vector of tuples (id, direction, dist)
-  Board(std::vector<Block> blocks, std::vector<std::tuple<int, char, int>> prevMoves);
+  Board(std::vector<Block> blocks, std::vector<std::tuple<int, int, char>> prevMoves);
   Board();
   bool isSolved();
   Block move(int id, int dist, char direction);
   std::vector<Board> getNextBoards();
   std::vector<Block> blocks;
-  std::vector<std::tuple<int, char, int>> prevMoves;
+  // prevMoves is vector of tuples (id, dist, direction)
+  std::vector<std::tuple<int, int, char>> prevMoves;
   void printBoard(std::ofstream *outputFileP);
 
 private:
@@ -25,6 +25,6 @@ private:
   bool blockInBounds(Block b);
   bool canMove(int id, int dist, char direction);
 
-  bool getNextBoardsInOneDirection(int i, int dist, char direction, std::vector<Board> *nextBoards);
+  bool getNextBoardsInOneDirection(int id, int dist, char direction, std::vector<Board> *nextBoards);
 };
 #endif //UNBLOCK_ME_SOLVER_BOARD_H

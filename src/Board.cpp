@@ -7,7 +7,7 @@
 #include <iostream>
 #include <fstream>
 
-Board::Board(std::vector<Block> blocks, std::vector<std::tuple<int, char, int>> prevMoves)
+Board::Board(std::vector<Block> blocks, std::vector<std::tuple<int, int, char>> prevMoves)
 {
     this->blocks = blocks;
     this->prevMoves = prevMoves;
@@ -16,7 +16,7 @@ Board::Board(std::vector<Block> blocks, std::vector<std::tuple<int, char, int>> 
 Board::Board()
 {
     std::vector<Block> blocks;
-    std::vector<std::tuple<int, char, int>> prevMoves;
+    std::vector<std::tuple<int, int, char>> prevMoves;
     this->blocks = blocks;
     this->prevMoves = prevMoves;
 }
@@ -106,22 +106,19 @@ bool Board::canMove(int id, int dist, char direction)
 Block Board::move(int id, int dist, char direction)
 {
     Block b = this->blocks[id];
-
-    if (direction == 'U')
-    {
-        b.TL_y -= dist;
-    }
-    else if (direction == 'D')
-    {
-        b.TL_y += dist;
-    }
-    else if (direction == 'R')
-    {
-        b.TL_x += dist;
-    }
-    else if (direction == 'L')
-    {
-        b.TL_x -= dist;
+    switch(direction) {
+        case 'U':
+            b.TL_y -= dist;
+            break;
+        case 'D':
+            b.TL_y += dist;
+            break;
+        case 'R':
+            b.TL_x += dist;
+            break;
+        case 'L':
+            b.TL_x -= dist;
+            break;
     }
 
     return b;
@@ -134,14 +131,14 @@ void printVectorMoves(std::vector<std::tuple<int, char, int> > V) {
 }
 
 // returns false if there was a collision, true otherwise
-bool Board::getNextBoardsInOneDirection(int i, int dist, char direction, std::vector<Board> *nextBoards)
+bool Board::getNextBoardsInOneDirection(int id, int dist, char direction, std::vector<Board> *nextBoards)
 {
-    if (canMove(i, dist, direction))
+    if (canMove(id, dist, direction))
     {
         std::vector<Block> newBlocks = this->blocks;
-        newBlocks[i] = move(i, dist, direction); 
-        std::vector<std::tuple<int, char, int>> newPrevMoves = this->prevMoves;
-        newPrevMoves.push_back(std::make_tuple(i, direction, dist));
+        newBlocks[id] = move(id, dist, direction); 
+        std::vector<std::tuple<int, int, char>> newPrevMoves = this->prevMoves;
+        newPrevMoves.push_back(std::make_tuple(id, dist, direction));
         Board newB = Board(newBlocks, newPrevMoves);
         (*nextBoards).push_back(newB);
         return true;

@@ -8,7 +8,40 @@
 #include "Board.h"
 #include "Block.h"
 
-// std::ofstream outputFile("../data/output.txt");
+void printSoln(Board startingBoard, std::vector<std::tuple<int, int, char>> soln, std::ofstream *outputFileP) {
+    if (soln.size() == 0) {
+        *outputFileP << "NO SOLUTION FOUND :^(";
+        return;
+    }
+    *outputFileP << "SOLUTION FOUND! :^)" << std::endl;
+    Board b = startingBoard;
+    for (int i = 0; i < soln.size(); i++) {
+        int id = std::get<0>(soln[i]);
+        int dist = std::get<1>(soln[i]);
+        std::string distString;
+        if (dist == 1) { distString = " step "; }
+        else { distString = " steps "; }
+        char direction = std::get<2>(soln[i]);
+        std::string directionString;
+        switch(direction) {
+            case 'U':
+                directionString = "up";
+                break;
+            case 'D':
+                directionString = "down";
+                break;
+            case 'R':
+                directionString = "to the right";
+                break;
+            case 'L':
+                directionString = "to the left";
+                break;
+        }
+        *outputFileP << "Step " << i+1 << ": Move block " << id << " " << dist << distString << directionString <<std::endl;
+        b.blocks[id] = b.move(id, dist, direction);
+        b.printBoard(outputFileP);
+    }
+}
 
 int main(int argc, char *argv[])
 {
@@ -39,7 +72,7 @@ int main(int argc, char *argv[])
     char orientation;
 
     std::vector<Block> blocks;
-    std::vector<std::tuple<int, char, int>> prevMoves(0);
+    std::vector<std::tuple<int, int, char>> prevMoves(0);
     while (inputFile >> TL_x >> TL_y >> length >> orientation)
     {
         Block tempBlock = Block(id++, TL_x, TL_y, length, orientation);
@@ -51,7 +84,7 @@ int main(int argc, char *argv[])
 
     auto start = std::chrono::high_resolution_clock::now();
 
-    std::vector<std::tuple<int, char, int>> soln = s.solveBFS();
+    std::vector<std::tuple<int, int, char>> soln = s.solveBFS();
 
     auto end = std::chrono::high_resolution_clock::now();
 
@@ -63,9 +96,10 @@ int main(int argc, char *argv[])
     // write soln to console
     for (int i = 0; i < soln.size(); i++)
     {
-        std::cout << "block id: " << std::get<0>(soln[i]) << ", direction: " << std::get<1>(soln[i]) << ", distance: " << std::get<2>(soln[i]) << "\n"
+        std::cout << "block id: " << std::get<0>(soln[i]) << ", distance: " << std::get<1>(soln[i]) << ", direction: " << std::get<2>(soln[i]) << "\n"
                   << std::endl;
     }
+    printSoln(startingBoard, soln, &outputFile);
 
     // TODO do that but better ^ (reconstruct the boards or smth)
     inputFile.close();

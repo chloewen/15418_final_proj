@@ -46,9 +46,9 @@ bool Solver::isIn(std::deque<Board> Q, Board x) {
   return false;
 }
 
-std::vector<std::tuple<int, char, int>> Solver::solveBFS()
+std::vector<std::tuple<int, int, char>> Solver::solveBFS()
 { 
-  std::vector<std::tuple<int, char, int>> empty;
+  std::vector<std::tuple<int, int, char>> empty;
   std::deque<Board> explored;
   std::deque<Board> frontier;
   frontier.push_back(this->startingBoard);
@@ -61,8 +61,8 @@ std::vector<std::tuple<int, char, int>> Solver::solveBFS()
     // currBoard.printBoard(this->outputFileP);
     frontier.pop_front();
     if (currBoard.isSolved()) {
-      *this->outputFileP << "solution board" << std::endl;
-      currBoard.printBoard(this->outputFileP);
+      // *this->outputFileP << "solution board" << std::endl;
+      // currBoard.printBoard(this->outputFileP);
       return currBoard.prevMoves;
     }
     // (*this->outputFileP) << "Next Moves" << std::endl;

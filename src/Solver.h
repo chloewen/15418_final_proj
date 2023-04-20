@@ -10,7 +10,7 @@ class Solver
 {
 public:
   Solver(Board startingBoard, std::ofstream* outputFileP);
-  std::vector<std::tuple<int, char, int>> solveBFS();
+  std::vector<std::tuple<int, int, char>> solveBFS();
   std::ofstream *outputFileP;
 
 private:
