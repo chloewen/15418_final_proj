@@ -66,22 +66,22 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    // construct board
+    // construct Solver
     int TL_x, TL_y, length;
     int id = 0;
     char orientation;
 
     std::vector<Block> blocks;
-    std::vector<std::tuple<int, int, char>> prevMoves(0);
     while (inputFile >> TL_x >> TL_y >> length >> orientation)
     {
         Block tempBlock = Block(id++, TL_x, TL_y, length, orientation);
         blocks.push_back(tempBlock);
     }
+    std::vector<std::tuple<int, int, char>> prevMoves(0);
     Board startingBoard = Board(blocks, prevMoves);
-
     Solver s = Solver(startingBoard, &outputFile);
 
+    // solve board
     auto start = std::chrono::high_resolution_clock::now();
 
     std::vector<std::tuple<int, int, char>> soln = s.solveBFS();
@@ -93,15 +93,9 @@ int main(int argc, char *argv[])
     std::cout << "soln.size() " << soln.size() << std::endl;
     std::cout << "Time taken " << runningTime.count() << std::endl;
 
-    // write soln to console
-    for (int i = 0; i < soln.size(); i++)
-    {
-        std::cout << "block id: " << std::get<0>(soln[i]) << ", distance: " << std::get<1>(soln[i]) << ", direction: " << std::get<2>(soln[i]) << "\n"
-                  << std::endl;
-    }
+    // write solution to output file 
     printSoln(startingBoard, soln, &outputFile);
 
-    // TODO do that but better ^ (reconstruct the boards or smth)
     inputFile.close();
     outputFile.close();
     return 0;

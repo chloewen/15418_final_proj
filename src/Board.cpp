@@ -21,6 +21,7 @@ Board::Board()
     this->prevMoves = prevMoves;
 }
 
+// returns true if any block to to the right of block 0 crosses the HOLE_Y axis
 bool Board::isSolved()
 {
     for (int i = 1; i < (this->blocks).size(); i++)
@@ -39,6 +40,7 @@ bool Board::isSolved()
     return true;
 }
 
+// returns true if b1 and b2 collide
 bool Board::collideTwo(Block b1, Block b2)
 {
     assert(b1.id != b2.id);
@@ -72,6 +74,7 @@ bool Board::collideTwo(Block b1, Block b2)
     }
 }
 
+// returns true if b collides with any other block
 bool Board::collideAny(Block b)
 {
     for (int i = 0; i < (this->blocks).size(); i++)
@@ -81,6 +84,7 @@ bool Board::collideAny(Block b)
     return false;
 }
 
+// returns false if b is out of bounds
 bool Board::blockInBounds(Block b)
 {
     if (b.orientation == 'h')
@@ -103,6 +107,7 @@ bool Board::canMove(int id, int dist, char direction)
     return blockInBounds(newB) && !collideAny(newB);
 }
 
+// returns a block moved d dist in direction direction
 Block Board::move(int id, int dist, char direction)
 {
     Block b = this->blocks[id];
