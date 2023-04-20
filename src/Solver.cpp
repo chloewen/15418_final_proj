@@ -52,16 +52,20 @@ std::vector<std::tuple<int, char, int>> Solver::solveBFS()
   std::deque<Board> explored;
   std::deque<Board> frontier;
   frontier.push_back(this->startingBoard);
+  // int iteration = 0;
   while (true) 
   {
     if (frontier.empty()) return empty;
     Board currBoard = frontier.front();
+    // (*this->outputFileP) << std::endl << "Iteration " << iteration << std::endl << "Popped Board" << std::endl;
+    // currBoard.printBoard(this->outputFileP);
     frontier.pop_front();
     if (currBoard.isSolved()) {
       *this->outputFileP << "solution board" << std::endl;
       currBoard.printBoard(this->outputFileP);
       return currBoard.prevMoves;
     }
+    // (*this->outputFileP) << "Next Moves" << std::endl;
     if (!isIn(explored,currBoard))
     {
       explored.push_back(currBoard);
@@ -69,12 +73,14 @@ std::vector<std::tuple<int, char, int>> Solver::solveBFS()
       for (int i = 0; i < nextBoards.size(); i++)
       {
         Board nextBoard = nextBoards[i];
-        if (!isIn(explored, nextBoard) && !isIn(frontier,nextBoard))
+        // nextBoard.printBoard(this->outputFileP);
+        if (!isIn(explored, nextBoard) && !isIn(frontier, nextBoard))
         {
           frontier.push_back(nextBoard);
         }
       }
     }
+    // iteration ++; 
   }
   return empty;
 }

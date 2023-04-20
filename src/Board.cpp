@@ -26,12 +26,14 @@ bool Board::isSolved()
     for (int i = 1; i < (this->blocks).size(); i++)
     {
         Block b = (this->blocks)[i];
-        if (b.orientation == 'v'){
-            if (b.TL_y <= HOLE_Y && HOLE_Y < b.TL_y + b.length)
-                return false;
-        } else {
-            assert(b.orientation == 'h');
-            if (b.TL_y == HOLE_Y) return false; 
+        if (b.TL_x >= (this->blocks)[0].TL_x){
+            if (b.orientation == 'v'){
+                if (b.TL_y <= HOLE_Y && HOLE_Y < b.TL_y + b.length)
+                    return false;
+            } else {
+                assert(b.orientation == 'h');
+                if (b.TL_y == HOLE_Y) return false; 
+            }
         }
     }
     return true;
