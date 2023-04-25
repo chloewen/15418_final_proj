@@ -1,1 +1,0 @@
-/usr/bin/c++  -std=c++11 -rdynamic CMakeFiles/unblock-me-solver.out.dir/src/main.cpp.o CMakeFiles/unblock-me-solver.out.dir/src/Board.cpp.o CMakeFiles/unblock-me-solver.out.dir/src/Block.cpp.o CMakeFiles/unblock-me-solver.out.dir/src/Solver.cpp.o -o unblock-me-solver.out 
