@@ -27,13 +27,13 @@ bool Board::isSolved()
     for (int i = 1; i < (this->blocks).size(); i++)
     {
         Block b = (this->blocks)[i];
-        if (b.TL_x >= (this->blocks)[0].TL_x){
+        if (b.BL_x >= (this->blocks)[0].BL_x){
             if (b.orientation == 'v'){
-                if (b.TL_y <= HOLE_Y && HOLE_Y < b.TL_y + b.length)
+                if (b.BL_y <= HOLE_Y && HOLE_Y < b.BL_y + b.length)
                     return false;
             } else {
                 assert(b.orientation == 'h');
-                if (b.TL_y == HOLE_Y) return false; 
+                if (b.BL_y == HOLE_Y) return false; 
             }
         }
     }
@@ -48,14 +48,14 @@ bool Board::collideTwo(Block b1, Block b2)
     {
         if (b2.orientation == 'h')
         { // - -
-            return b1.TL_y == b2.TL_y && ((b1.TL_x <= b2.TL_x && b2.TL_x < b1.TL_x + b1.length) 
-                                       || (b2.TL_x <= b1.TL_x && b1.TL_x < b2.TL_x + b2.length));
+            return b1.BL_y == b2.BL_y && ((b1.BL_x <= b2.BL_x && b2.BL_x < b1.BL_x + b1.length) 
+                                       || (b2.BL_x <= b1.BL_x && b1.BL_x < b2.BL_x + b2.length));
         }
         else
         { // - |
             assert(b2.orientation == 'v');
-            return (b1.TL_x <= b2.TL_x && b2.TL_x < b1.TL_x + b1.length /*x's collide*/
-                 && b2.TL_y <= b1.TL_y && b1.TL_y < b2.TL_y + b2.length /*y's collide*/);
+            return (b1.BL_x <= b2.BL_x && b2.BL_x < b1.BL_x + b1.length /*x's collide*/
+                 && b2.BL_y <= b1.BL_y && b1.BL_y < b2.BL_y + b2.length /*y's collide*/);
         }
     }
     else
@@ -63,13 +63,13 @@ bool Board::collideTwo(Block b1, Block b2)
         assert(b1.orientation == 'v');
         if (b2.orientation == 'h')
         { // | -
-            return (b2.TL_x <= b1.TL_x && b1.TL_x < b2.TL_x + b2.length /*x's collide*/
-                 && b1.TL_y <= b2.TL_y && b2.TL_y < b1.TL_y + b1.length /*y's collide*/);
+            return (b2.BL_x <= b1.BL_x && b1.BL_x < b2.BL_x + b2.length /*x's collide*/
+                 && b1.BL_y <= b2.BL_y && b2.BL_y < b1.BL_y + b1.length /*y's collide*/);
         }
         else
         { // | |
-            return b1.TL_x == b2.TL_x && ((b1.TL_y <= b2.TL_y && b2.TL_y < b1.TL_y + b1.length)
-                                       || (b2.TL_y <= b1.TL_y && b1.TL_y < b2.TL_y + b2.length));
+            return b1.BL_x == b2.BL_x && ((b1.BL_y <= b2.BL_y && b2.BL_y < b1.BL_y + b1.length)
+                                       || (b2.BL_y <= b1.BL_y && b1.BL_y < b2.BL_y + b2.length));
         }
     }
 }
@@ -89,12 +89,12 @@ bool Board::blockInBounds(Block b)
 {
     if (b.orientation == 'h')
     {
-        return b.TL_x >= 0 && b.TL_x + b.length <= BOARD_WIDTH && b.TL_y >= 0 && b.TL_y < BOARD_HEIGHT;
+        return b.BL_x >= 0 && b.BL_x + b.length <= BOARD_WIDTH && b.BL_y >= 0 && b.BL_y < BOARD_HEIGHT;
     }
     else
     {
         assert(b.orientation == 'v');
-        return b.TL_y >= 0 && b.TL_y + b.length <= BOARD_HEIGHT && b.TL_x >= 0 && b.TL_x < BOARD_WIDTH;
+        return b.BL_y >= 0 && b.BL_y + b.length <= BOARD_HEIGHT && b.BL_x >= 0 && b.BL_x < BOARD_WIDTH;
     }
 }
 
@@ -113,16 +113,16 @@ Block Board::move(int id, int dist, char direction)
     Block b = this->blocks[id];
     switch(direction) {
         case 'U':
-            b.TL_y -= dist;
+            b.BL_y -= dist;
             break;
         case 'D':
-            b.TL_y += dist;
+            b.BL_y += dist;
             break;
         case 'R':
-            b.TL_x += dist;
+            b.BL_x += dist;
             break;
         case 'L':
-            b.TL_x -= dist;
+            b.BL_x -= dist;
             break;
     }
 
@@ -165,13 +165,13 @@ void Board::printBoard(std::ofstream *outputFileP) {
             for (int i = 0; i < this->blocks.size(); i++) {
                 Block b = (this->blocks)[i];
                 if (b.orientation == 'h') {
-                    if (b.TL_y == y && b.TL_x <= x && x < b.TL_x + b.length) {
+                    if (b.BL_y == y && b.BL_x <= x && x < b.BL_x + b.length) {
                         *outputFileP << i;
                         hasBlock = true;
                     }
                 } else {
                     assert(b.orientation == 'v');
-                    if (b.TL_x == x && b.TL_y <= y && y < b.TL_y + b.length) {
+                    if (b.BL_x == x && b.BL_y <= y && y < b.BL_y + b.length) {
                         *outputFileP << i;
                         hasBlock = true;
                     }
@@ -197,13 +197,13 @@ std::vector<Board> Board::getNextBoards()
         if (b.orientation == 'h')
         {
             // try to go left
-            for (int dx = 1; dx <= b.TL_x; dx++)
+            for (int dx = 1; dx <= b.BL_x; dx++)
             {
                 // increment distance by one. If collision, stop 
                 if (!getNextBoardsInOneDirection(i, dx, 'L', &nextBoards)) break; 
             }
             // try to go right
-            for (int dx = 1; dx <= BOARD_WIDTH - (b.TL_x + b.length); dx++)
+            for (int dx = 1; dx <= BOARD_WIDTH - (b.BL_x + b.length); dx++)
             {
                 // increment distance by one. If collision, stop 
                 if (!getNextBoardsInOneDirection(i, dx, 'R', &nextBoards)) break; 
@@ -213,13 +213,13 @@ std::vector<Board> Board::getNextBoards()
         {
             assert(b.orientation == 'v');
             // try to go up
-            for (int dy = 1; dy <= b.TL_y; dy++)
+            for (int dy = 1; dy <= b.BL_y; dy++)
             {
                 // increment distance by one. If collision, stop 
                 if (!getNextBoardsInOneDirection(i, dy, 'U', &nextBoards)) break; 
             }
             // try to go down
-            for (int dy = 1; dy <= BOARD_HEIGHT - (b.TL_y + b.length); dy++)
+            for (int dy = 1; dy <= BOARD_HEIGHT - (b.BL_y + b.length); dy++)
             {
                 // increment distance by one. If collision, stop 
                 if (!getNextBoardsInOneDirection(i, dy, 'D', &nextBoards)) break; 

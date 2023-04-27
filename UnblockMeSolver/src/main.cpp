@@ -69,14 +69,14 @@ int main(int argc, char *argv[])
     }
 
     // construct Solver
-    int TL_x, TL_y, length;
+    int BL_x, BL_y, length;
     int id = 0;
     char orientation;
 
     std::vector<Block> blocks;
-    while (inputFile >> TL_x >> TL_y >> length >> orientation)
+    while (inputFile >> BL_x >> BL_y >> length >> orientation)
     {
-        Block tempBlock = Block(id++, TL_x, TL_y, length, orientation);
+        Block tempBlock = Block(id++, BL_x, BL_y, length, orientation);
         blocks.push_back(tempBlock);
     }
     std::vector<std::tuple<int, int, char>> prevMoves(0);

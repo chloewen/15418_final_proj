@@ -22,8 +22,8 @@ bool Solver::vecEqual(std::vector<Block> B1, std::vector<Block> B2) {
   for (int i = 0; i < B1.size(); i++) {
     Block b1 = B1[i];
     Block b2 = B2[i];
-    if (b1.TL_x != b2.TL_x 
-        || b1.TL_y != b2.TL_y 
+    if (b1.BL_x != b2.BL_x 
+        || b1.BL_y != b2.BL_y 
         || b1.length != b2.length
         || b1.orientation != b2.orientation) return false;
   }
