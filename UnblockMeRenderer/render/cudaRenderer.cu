@@ -223,9 +223,15 @@ __global__ void kernelAdvanceBlocks() {
     // if (index == 0) radius[index] += 0.01f; 
 
     // float3 p = *(float3*)(&cuConstRendererParams.position[index*3]);
-    float cutOff = 0.f; 
-    if (index == 3) {
-        if ((cuConstRendererParams.position[index*3+1]) > cutOff) cuConstRendererParams.position[index*3+1] -= .25f;
+    float cutOff0 = 0.f; 
+    float cutOff1 = 4.f;
+    int blockI0 = 3;
+    int blockI1 = 4; 
+    if (index == 0) {
+        if ((cuConstRendererParams.position[blockI0*3+1]) > cutOff0) 
+            {cuConstRendererParams.position[blockI0*3+1] -= .25f; }
+        else if ((cuConstRendererParams.position[blockI1*3+1]) < cutOff1) 
+            {cuConstRendererParams.position[blockI1*3+1] += .25f; }
     }
 }   
 
