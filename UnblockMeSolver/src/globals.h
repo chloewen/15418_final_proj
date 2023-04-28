@@ -3,6 +3,6 @@
 
 #define BOARD_WIDTH 6
 #define BOARD_HEIGHT 6
-#define HOLE_Y 2
+#define HOLE_Y 3
 
 #endif //UNBLOCK_ME_SOLVER_GLOBALS_H

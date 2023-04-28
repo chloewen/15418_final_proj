@@ -113,10 +113,10 @@ Block Board::move(int id, int dist, char direction)
     Block b = this->blocks[id];
     switch(direction) {
         case 'U':
-            b.BL_y -= dist;
+            b.BL_y += dist;
             break;
         case 'D':
-            b.BL_y += dist;
+            b.BL_y -= dist;
             break;
         case 'R':
             b.BL_x += dist;
@@ -158,7 +158,8 @@ void Board::printBoard(std::ofstream *outputFileP) {
     *outputFileP << "  "; 
     for (int x = 0; x < BOARD_WIDTH; x++) { *outputFileP << "--"; }
     *outputFileP << std::endl; 
-    for (int y = 0; y < BOARD_HEIGHT; y++) {
+    // print rows out backward 
+    for (int y = BOARD_HEIGHT - 1; y >= 0; y--) {
         *outputFileP << y << "|";
         for (int x = 0; x < BOARD_WIDTH; x++) {
             bool hasBlock = false;
@@ -212,17 +213,17 @@ std::vector<Board> Board::getNextBoards()
         else
         {
             assert(b.orientation == 'v');
-            // try to go up
+            // try to go down
             for (int dy = 1; dy <= b.BL_y; dy++)
             {
                 // increment distance by one. If collision, stop 
-                if (!getNextBoardsInOneDirection(i, dy, 'U', &nextBoards)) break; 
+                if (!getNextBoardsInOneDirection(i, dy, 'D', &nextBoards)) break; 
             }
-            // try to go down
+            // try to go up
             for (int dy = 1; dy <= BOARD_HEIGHT - (b.BL_y + b.length); dy++)
             {
                 // increment distance by one. If collision, stop 
-                if (!getNextBoardsInOneDirection(i, dy, 'D', &nextBoards)) break; 
+                if (!getNextBoardsInOneDirection(i, dy, 'U', &nextBoards)) break; 
             }
         }
     }
