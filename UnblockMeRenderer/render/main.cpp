@@ -96,7 +96,33 @@ int main(int argc, char** argv)
 
     if (sceneNameStr.compare("block") == 0) {
         sceneName = BLOCK;
-    } else {
+    } 
+    else if (sceneNameStr.compare("snow") == 0) {
+        sceneName = SNOWFLAKES;
+    } else if (sceneNameStr.compare("snowsingle") == 0) {
+        sceneName = SNOWFLAKES_SINGLE_FRAME;
+    } else if (sceneNameStr.compare("rgb") == 0) {
+        sceneName = CIRCLE_RGB;
+    } else if (sceneNameStr.compare("rgby") == 0) {
+        sceneName = CIRCLE_RGBY;
+    } else if (sceneNameStr.compare("rand10k") == 0) {
+        sceneName = CIRCLE_TEST_10K;
+    } else if (sceneNameStr.compare("rand100k") == 0) {
+        sceneName = CIRCLE_TEST_100K;
+    } else if (sceneNameStr.compare("pattern") == 0) {
+        sceneName = PATTERN;
+    } else if (sceneNameStr.compare("biglittle") == 0) {
+        sceneName = BIG_LITTLE;
+    } else if (sceneNameStr.compare("littlebig") == 0) {
+        sceneName = LITTLE_BIG;
+    } else if (sceneNameStr.compare("bouncingballs") == 0) {
+        sceneName = BOUNCING_BALLS;  
+    } else if (sceneNameStr.compare("hypnosis") == 0) { 
+        sceneName = HYPNOSIS;           
+    } else if (sceneNameStr.compare("fireworks") == 0) { 
+        sceneName = FIREWORKS;    
+    }
+    else {
         fprintf(stderr, "Unknown scene name (%s)\n", sceneNameStr.c_str());
         usage(argv[0]);
         return 1;

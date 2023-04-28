@@ -67,6 +67,9 @@ __constant__ float  cuConstColorRamp[COLOR_MAP_SIZE][3];
 #define BLOCK_HEIGHT 1.f/6.f
 #define BORDER_WIDTH 0.01f//.01f
 
+#define NUM_FIREWORKS 5
+#define NUM_SPARKS 5
+
 
 // kernelClearImageSnowflake -- (CUDA device code)
 //
@@ -198,6 +201,34 @@ __global__ void kernelAdvanceHypnosis() {
         radius[index] += 0.01f; 
     }   
 }   
+
+
+// kernelAdvanceBlocks   
+//
+// Update the radius/color of the circles
+__global__ void kernelAdvanceBlocks() { 
+    int index = blockIdx.x * blockDim.x + threadIdx.x;
+    if (index >= cuConstRendererParams.numberOfCircles) 
+        return; 
+
+    float* radius = cuConstRendererParams.radius; 
+
+    // float cutOff = 0.5f;
+    // // Place circle back in center after reaching threshold radisus 
+    // if (radius[index] > cutOff) { 
+    //     radius[index] = 0.02f; 
+    // } else { 
+    // }   
+
+    // if (index == 0) radius[index] += 0.01f; 
+
+    // float3 p = *(float3*)(&cuConstRendererParams.position[index*3]);
+    float cutOff = 0.f; 
+    if (index == 3) {
+        if ((cuConstRendererParams.position[index*3+1]) > cutOff) cuConstRendererParams.position[index*3+1] -= .25f;
+    }
+}   
+
 
 
 // kernelAdvanceBouncingBalls
@@ -414,8 +445,8 @@ __global__ void kernelRenderCircles() {
     // screen coordinates, so it's clamped to the edges of the screen.
     short imageWidth = cuConstRendererParams.imageWidth;
     short imageHeight = cuConstRendererParams.imageHeight;
-    int BL_x = p.x; // bottom left x
-    int BL_y = p.y; // bottom left y 
+    float BL_x = p.x; // bottom left x
+    float BL_y = p.y; // bottom left y 
     char orientation = p.z == 1 ? 'v' : 'h';
 
     float minXNorm = BORDER_WIDTH + BL_x * BLOCK_HEIGHT; 
@@ -713,14 +744,17 @@ CudaRenderer::advanceAnimation() {
     dim3 gridDim((numberOfCircles + blockDim.x - 1) / blockDim.x);
 
     // only the snowflake scene has animation
-    if (sceneName == SNOWFLAKES) {
-        kernelAdvanceSnowflake<<<gridDim, blockDim>>>();
-    } else if (sceneName == BOUNCING_BALLS) {
-        kernelAdvanceBouncingBalls<<<gridDim, blockDim>>>();
-    } else if (sceneName == HYPNOSIS) {
-        kernelAdvanceHypnosis<<<gridDim, blockDim>>>();
-    } else if (sceneName == FIREWORKS) { 
-        kernelAdvanceFireWorks<<<gridDim, blockDim>>>(); 
+    // if (sceneName == SNOWFLAKES) {
+    //     kernelAdvanceSnowflake<<<gridDim, blockDim>>>();
+    // } else if (sceneName == BOUNCING_BALLS) {
+    //     kernelAdvanceBouncingBalls<<<gridDim, blockDim>>>();
+    // } else if (sceneName == HYPNOSIS) {
+    //     kernelAdvanceHypnosis<<<gridDim, blockDim>>>();
+    // } else if (sceneName == FIREWORKS) { 
+    //     kernelAdvanceFireWorks<<<gridDim, blockDim>>>(); 
+    // } else 
+    if (sceneName == BLOCK) {
+        kernelAdvanceBlocks<<<gridDim, blockDim>>>(); 
     }
     cudaDeviceSynchronize();
 }

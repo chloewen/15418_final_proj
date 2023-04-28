@@ -21,7 +21,7 @@ loadCircleScene(
     float*& radius)
 {
     if (sceneName == BLOCK) {
-        std::ifstream inputFile("data/input-expert-6x6.txt");
+        std::ifstream inputFile("data/input-1-6x6.txt");
         if (!inputFile.is_open())
         {
             std::cerr << "There was a problem with the input file, please verify that the input file is there." << std::endl;

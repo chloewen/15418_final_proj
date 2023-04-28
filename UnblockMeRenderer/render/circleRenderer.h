@@ -5,7 +5,19 @@ struct Image;
 
 
 typedef enum {
-    BLOCK
+    BLOCK,
+    CIRCLE_RGB,
+    CIRCLE_RGBY,
+    CIRCLE_TEST_10K,
+    CIRCLE_TEST_100K,
+    PATTERN,
+    SNOWFLAKES,
+    BOUNCING_BALLS, 
+    HYPNOSIS, 
+    FIREWORKS, 
+    SNOWFLAKES_SINGLE_FRAME,
+    BIG_LITTLE,
+    LITTLE_BIG
 } SceneName;
 
 
