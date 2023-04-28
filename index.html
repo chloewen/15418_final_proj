@@ -1,0 +1,37 @@
+<h1>Parallel Unblock Me Solver</h1>
+<p>Team Members: Sangita Setlur & Chloe Wen</p>
+<p>URL: <a href="https://chloewen.github.io/15418_final_proj/">https://chloewen.github.io/15418_final_proj/</a></p>
+<h3>Summary</h3>
+
+<p>We are going to implement an optimized solver for the game Unblock Me. We plan on using both CUDA and OpenMP to implement parallelization and will compare the results of these implementations. </p>
+<p>We will also optimizie our implementation by using alpha-beta pruning to reduce the size of our game tree. </p>
+
+<h3>Background</h3>
+<p>Unblock Me is a puzzle where a user is given a board of blocks, with one horizontal red block on the very left of the board and a hole on that row on the right wall. The user's goal is to shift the other blocks around to create a path for the red block to go through the hole. </p> 
+<img src="https://www.thanassis.space/unblock.jpg"><img/>
+<p>One of the goals of the game is to solve it in as few moves as possible, which means that our solver has an optimal return condition. Parallelization would help the solver because this game tree has a large branching factor, since at every step we can (if possible) move any block in any direction. For complicated puzzles with a high maximum depth, these trees could get really big. By creating the tree in parallel, we can greatly reduce this computational intensity and hopefully achieve a significant speedup to a naive, sequential solver. </p>
+
+<h3>The Challenge</h3>
+<p>The challenge with parallelizing this game is that the game is inherently sequential, so there will have to be a high amount of communication between the worker threads at each time step. A move will change the position of a block, which affects the possible moves of the neighboring blocks in the next iteration. Each time step is dependent on the results of the previous move, though each move from the current time step is independent of each other, which is the part we can parallelize. </p>
+<p>Every board has a different number of blocks, and each block has a different depth in the tree (for example, one block may get blocked early and not be able to move for the rest of the game). As such, there is an unpredictable workload imbalance and we will need to figure out a reasonable assignment of work to threads. </p>
+
+<h3>Resources</h3>
+<p>We are using the image processor from <a href="https://www.thanassis.space/unblock.html">this link</a> which, given a picture of a board will parse the position of the blocks and store them in a list. This will represent the starting state of our game. </p>
+
+<h3>Goals and Deliverables</h3>
+<p><strong>Plan to achieve: </strong> Implement a naive, sequential solver. Then, build the parallel game solver in both OpenMP and CUDA.</p>
+<p><strong>Hope to achieve: </strong> Optimize our game tree by pruning with alpha-beta.</p>
+<p>At the poster session, we plan to show the solution from our solver and the graphs of speedups with openMP and CUDA. </p>
+
+<h3>Platform Choice</h3>
+<p>We will use C++, CUDA, and OpenMP because these platforms allow us to assign work to workers with some flexibility (for example, OpenMP allows us to dynamically schedule work, which may be optimal for boards with unbalanced game trees).</p>
+
+<h3>Schedule</h3>
+<p><strong>Week 1: 3/31-4/5 </strong> Using starter image processing code (from above link)write a naive sequential implementation of a solver. </p>
+<p><strong>Week 2: 4/6-4/12 </strong> Parallelize the sequential solver with OpenMP.</p>
+<p><strong>Week 3: 4/13-4/19 </strong> Begin CUDA implementation from sequential solver. </p>
+<p><strong>Week 4: 4/20-4/26 </strong> Finish CUDA implementation from sequential solver. Compare and contrast the two implementations' performance. </p>
+<p><strong>Week 5: 4/27-5/4 </strong> Write final report, optimize with alpha-beta pruning if time allows. </p>
+
+<h3>Midpoint writeup: </h3>
+<a href="https://docs.google.com/document/d/1FJlHZwH9eYLonlVw0D6D0EZist6MdVp-SuELu5KXPDk/edit?usp=sharing">https://docs.google.com/document/d/1FJlHZwH9eYLonlVw0D6D0EZist6MdVp-SuELu5KXPDk/edit?usp=sharing</a>
