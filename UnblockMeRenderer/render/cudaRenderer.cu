@@ -16,6 +16,8 @@
 #include "noise.h"
 #include "sceneLoader.h"
 #include "util.h"
+#include <cassert>
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -61,6 +63,9 @@ __constant__ float  cuConstColorRamp[COLOR_MAP_SIZE][3];
 // file simpler and to seperate code that should not be modified
 #include "noiseCuda.cu_inl"
 #include "lookupColor.cu_inl"
+
+#define BLOCK_HEIGHT 1.f/6.f
+#define BORDER_WIDTH 0.01f//.01f
 
 
 // kernelClearImageSnowflake -- (CUDA device code)
@@ -331,11 +336,11 @@ shadePixel(float2 pixelCenter, float3 p, float4* imagePtr, int circleIndex) {
     float pixelDist = diffX * diffX + diffY * diffY;
 
     float rad = cuConstRendererParams.radius[circleIndex];;
-    float maxDist = rad * rad;
+    // float maxDist = rad * rad;
 
-    // Circle does not contribute to the image
-    if (pixelDist > maxDist)
-        return;
+    // // Circle does not contribute to the image
+    // if (pixelDist > maxDist)
+    //     return;
 
     float3 rgb;
     float alpha;
@@ -347,25 +352,27 @@ shadePixel(float2 pixelCenter, float3 p, float4* imagePtr, int circleIndex) {
     // setting up the lane masks, etc., to implement the conditional.  It
     // would be wise to perform this logic outside of the loops in
     // kernelRenderCircles.  (If feeling good about yourself, you
-    // could use some specialized template magic).
-    if (cuConstRendererParams.sceneName == SNOWFLAKES || cuConstRendererParams.sceneName == SNOWFLAKES_SINGLE_FRAME) {
+    // // could use some specialized template magic).
+    // if (cuConstRendererParams.sceneName == SNOWFLAKES || cuConstRendererParams.sceneName == SNOWFLAKES_SINGLE_FRAME) {
 
-        const float kCircleMaxAlpha = .5f;
-        const float falloffScale = 4.f;
+    //     const float kCircleMaxAlpha = .5f;
+    //     const float falloffScale = 4.f;
 
-        float normPixelDist = sqrt(pixelDist) / rad;
-        rgb = lookupColor(normPixelDist);
+    //     float normPixelDist = sqrt(pixelDist) / rad;
+    //     rgb = lookupColor(normPixelDist);
 
-        float maxAlpha = .6f + .4f * (1.f-p.z);
-        maxAlpha = kCircleMaxAlpha * fmaxf(fminf(maxAlpha, 1.f), 0.f); // kCircleMaxAlpha * clamped value
-        alpha = maxAlpha * exp(-1.f * falloffScale * normPixelDist * normPixelDist);
+    //     float maxAlpha = .6f + .4f * (1.f-p.z);
+    //     maxAlpha = kCircleMaxAlpha * fmaxf(fminf(maxAlpha, 1.f), 0.f); // kCircleMaxAlpha * clamped value
+    //     alpha = maxAlpha * exp(-1.f * falloffScale * normPixelDist * normPixelDist);
 
-    } else {
-        // Simple: each circle has an assigned color
-        int index3 = 3 * circleIndex;
-        rgb = *(float3*)&(cuConstRendererParams.color[index3]);
-        alpha = .5f;
-    }
+    // } else {
+    //     // Simple: each circle has an assigned color
+    //     rgb = *(float3*)&(cuConstRendererParams.color[index3]);
+    //     alpha = .5f;
+    // }
+    int index3 = 3 * circleIndex;
+    rgb = *(float3*)&(cuConstRendererParams.color[index3]);
+    alpha = 1.f;
 
     float oneMinusAlpha = 1.f - alpha;
 
@@ -401,26 +408,62 @@ __global__ void kernelRenderCircles() {
 
     // Read position and radius
     float3 p = *(float3*)(&cuConstRendererParams.position[index3]);
-    float rad = cuConstRendererParams.radius[index];
+    float length = cuConstRendererParams.radius[index]; 
 
     // Compute the bounding box of the circle. The bound is in integer
     // screen coordinates, so it's clamped to the edges of the screen.
     short imageWidth = cuConstRendererParams.imageWidth;
     short imageHeight = cuConstRendererParams.imageHeight;
-    int numBlocksX = p.x;
-    int numBordersX = p.x == 0  ? 0 : p.x-1;
-    short minX = static_cast<short>(imageWidth * (p.x * .15f + numBordersX * .01f)); // static_cast<short>(imageWidth * (p.x - rad));
-    int numBlocksY = p.y;
-    int numBordersY = p.y == 0  ? 0 : p.y-1;
-    short minY = static_cast<short>(imageHeight * (p.y * .15f + numBordersY * .01f));  // static_cast<short>(imageHeight * (p.y + rad)) + 1;
-    short maxX; short maxY; 
-    if (p.z == 1.f) { // vertical 
-        maxX = static_cast<short>(imageWidth  * (p.x+ 1) * .15f ); // static_cast<short>(imageWidth * (p.x + rad)) + 1;
-        maxY = static_cast<short>(imageHeight * ((p.y + rad) * .15f)); // static_cast<short>(imageHeight * (p.y - rad));
-    } else { // horizontal
-        maxX = static_cast<short>(imageWidth * ((p.x + rad) * .15f)); // static_cast<short>(imageWidth * (p.x + rad)) + 1;
-        maxY = static_cast<short>(imageHeight * ((p.y + 1) * .15f)); // static_cast<short>(imageHeight * (p.y - rad));
+    int BL_x = p.x; // bottom left x
+    int BL_y = p.y; // bottom left y 
+    char orientation = p.z == 1 ? 'v' : 'h';
+
+    float minXNorm = BORDER_WIDTH + BL_x * BLOCK_HEIGHT; 
+    float minYNorm = BORDER_WIDTH + BL_y * BLOCK_HEIGHT;
+    float maxXNorm, maxYNorm; 
+
+    if (orientation == 'h') {
+        maxXNorm = (BL_x + length)*BLOCK_HEIGHT; 
+        maxYNorm = (BL_y + 1)*BLOCK_HEIGHT;
+    } else {
+        assert(orientation == 'v');
+        maxXNorm = (BL_x + 1)*BLOCK_HEIGHT; 
+        maxYNorm = (BL_y + length)*BLOCK_HEIGHT;
     }
+
+    assert (maxXNorm > minXNorm);
+    assert (maxYNorm > minYNorm);
+
+    // assert (maxXNorm <= 1);
+    // assert (maxXNorm >= 0);
+    // assert (maxYNorm <= 1);
+    // assert (maxYNorm >= 0);
+    // assert (minXNorm <= 1);
+    // assert (minXNorm >= 0);
+    // assert (minYNorm <= 1);
+    // assert (minYNorm >= 0);
+
+
+
+    short minX = static_cast<short>(imageWidth * minXNorm);
+    short minY = static_cast<short>(imageHeight * minYNorm);
+    short maxX = static_cast<short>(imageWidth * maxXNorm);
+    short maxY = static_cast<short>(imageHeight * maxYNorm);
+
+
+    // int numBordersX = p.x == 0  ? 0 : p.x-1;
+    // short minX = static_cast<short>(imageWidth * (p.x * .15f + numBordersX * .01f)); // static_cast<short>(imageWidth * (p.x - rad));
+    // int numBlocksY = p.y;
+    // int numBordersY = p.y == 0  ? 0 : p.y-1;
+    // short minY = static_cast<short>(imageHeight * (p.y * .15f + numBordersY * .01f));  // static_cast<short>(imageHeight * (p.y + rad)) + 1;
+    // short maxX; short maxY; 
+    // if (p.z == 1.f) { // vertical 
+    //     maxX = static_cast<short>(imageWidth  * (p.x+ 1) * .15f ); // static_cast<short>(imageWidth * (p.x + rad)) + 1;
+    //     maxY = static_cast<short>(imageHeight * ((p.y + rad) * .15f)); // static_cast<short>(imageHeight * (p.y - rad));
+    // } else { // horizontal
+    //     maxX = static_cast<short>(imageWidth * ((p.x + rad) * .15f)); // static_cast<short>(imageWidth * (p.x + rad)) + 1;
+    //     maxY = static_cast<short>(imageHeight * ((p.y + 1) * .15f)); // static_cast<short>(imageHeight * (p.y - rad));
+    // }
 
     // A bunch of clamps.  Is there a CUDA built-in for this?
     short screenMinX = (minX > 0) ? ((minX < imageWidth) ? minX : imageWidth) : 0;
@@ -428,8 +471,29 @@ __global__ void kernelRenderCircles() {
     short screenMinY = (minY > 0) ? ((minY < imageHeight) ? minY : imageHeight) : 0;
     short screenMaxY = (maxY > 0) ? ((maxY < imageHeight) ? maxY : imageHeight) : 0;
 
+    assert (screenMaxX > screenMinX);
+    assert (screenMaxY > screenMinY);
+
+    assert (screenMaxX >= 0);
+    assert (screenMaxX <= imageWidth);
+    assert (screenMaxY >= 0);
+    assert (screenMaxY <= imageHeight);
+    assert (screenMinX >= 0);
+    assert (screenMinX <= imageWidth);
+    assert (screenMinY >= 0);
+    assert (screenMinY <= imageHeight);
+
     float invWidth = 1.f / imageWidth;
     float invHeight = 1.f / imageHeight;
+
+    if (index == 2) {
+        printf("%d \n", screenMinX);
+        printf("%d \n", screenMaxX);
+        printf("%d \n", screenMinY);
+        printf("%d \n", screenMaxY);
+        printf("%d \n", imageWidth);
+        printf("%d \n", imageHeight);
+    }
 
     // For all pixels in the bounding box
     for (int pixelY=screenMinY; pixelY<screenMaxY; pixelY++) {

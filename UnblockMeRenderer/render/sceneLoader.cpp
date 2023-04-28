@@ -4,9 +4,11 @@
 #include <stdio.h>
 #include <vector>
 #include <functional>
-
+#include <iostream>
 #include "sceneLoader.h"
 #include "util.h"
+#include <fstream>
+
 
 // randomFloat --
 // //
@@ -159,57 +161,58 @@ loadCircleScene(
     float*& radius)
 {
 
-    if (sceneName == SNOWFLAKES) {
+    // if (sceneName == SNOWFLAKES) {
 
-        // 100K circles
-        //
-        // Circles are sorted in reverse depth order (farthest first).
-        // This order must be respected by the renderer for correct
-        // transparency rendering.
+    //     // 100K circles
+    //     //
+    //     // Circles are sorted in reverse depth order (farthest first).
+    //     // This order must be respected by the renderer for correct
+    //     // transparency rendering.
 
-        numCircles = 100 * 1000;
+    //     numCircles = 100 * 1000;
 
-        position = new float[3 * numCircles];
-        velocity = new float[3 * numCircles];
-        color = new float[3 * numCircles];
-        radius = new float[numCircles];
+    //     position = new float[3 * numCircles];
+    //     velocity = new float[3 * numCircles];
+    //     color = new float[3 * numCircles];
+    //     radius = new float[numCircles];
 
-        srand(0);
-        std::vector<float> depths(numCircles);
+    //     srand(0);
+    //     std::vector<float> depths(numCircles);
 
-        for (int i=0; i<numCircles; i++) {
-            // most of the circles are farther away from the camera
-            depths[i] = CLAMP(powf((static_cast<float>(i) / numCircles), .1f) + (-.05f + .1f * randomFloat()), 0.f, 1.f);
-        }
+    //     for (int i=0; i<numCircles; i++) {
+    //         // most of the circles are farther away from the camera
+    //         depths[i] = CLAMP(powf((static_cast<float>(i) / numCircles), .1f) + (-.05f + .1f * randomFloat()), 0.f, 1.f);
+    //     }
 
-        // sort the depths, and then assign depths to particles
-        std::sort(depths.begin(), depths.end(), std::greater<float>());
+    //     // sort the depths, and then assign depths to particles
+    //     std::sort(depths.begin(), depths.end(), std::greater<float>());
 
-        const static float kMinSnowRadius = .0075f;
+    //     const static float kMinSnowRadius = .0075f;
 
-        for (int i=0; i<numCircles; i++) {
+    //     for (int i=0; i<numCircles; i++) {
 
-            float depth = depths[i];
+    //         float depth = depths[i];
 
-            float closeSize = .08f;
-            float actualSize = closeSize - .0075f + (.015f * randomFloat());
-            radius[i] = ((1.f - depth) * actualSize) + (depth * actualSize / 15.f);
-            if (depth < .02f)
-                radius[i] *= 3.f;
-            else if (radius[i] < kMinSnowRadius)
-                radius[i] = kMinSnowRadius;
+    //         float closeSize = .08f;
+    //         float actualSize = closeSize - .0075f + (.015f * randomFloat());
+    //         radius[i] = ((1.f - depth) * actualSize) + (depth * actualSize / 15.f);
+    //         if (depth < .02f)
+    //             radius[i] *= 3.f;
+    //         else if (radius[i] < kMinSnowRadius)
+    //             radius[i] = kMinSnowRadius;
 
-            int index3 = 3 * i;
-            position[index3] = randomFloat();
-            position[index3+1] = 1.f + radius[i] + 2.f * randomFloat();
-            position[index3+2] = depth;
+    //         int index3 = 3 * i;
+    //         position[index3] = randomFloat();
+    //         position[index3+1] = 1.f + radius[i] + 2.f * randomFloat();
+    //         position[index3+2] = depth;
 
-            velocity[index3] = 0.f;
-            velocity[index3+1] = 0.f;
-            velocity[index3+2] = 0.f;
-        }
+    //         velocity[index3] = 0.f;
+    //         velocity[index3+1] = 0.f;
+    //         velocity[index3+2] = 0.f;
+    //     }
 
-    }else if (sceneName == BOUNCING_BALLS) {
+    // }else 
+    if (sceneName == BOUNCING_BALLS) {
         srand(0);
         numCircles = 10;   
         position = new float[3 * numCircles]; 
@@ -317,31 +320,32 @@ loadCircleScene(
                 velocity[index3j+2] = 0.0f;
             }
         }
-    } else if (sceneName == SNOWFLAKES_SINGLE_FRAME) {
-        const char* filename = "snow.par";
-        FILE* file = fopen(filename, "r");
-        if (!file) {
-            fprintf(stderr, "Error: Could not open file: %s\n", filename);
-            exit(1);
-        }
+    // } else if (sceneName == SNOWFLAKES_SINGLE_FRAME) {
+    //     const char* filename = "snow.par";
+    //     FILE* file = fopen(filename, "r");
+    //     if (!file) {
+    //         fprintf(stderr, "Error: Could not open file: %s\n", filename);
+    //         exit(1);
+    //     }
 
-        fscanf(file, "%d\n", &numCircles);
+    //     fscanf(file, "%d\n", &numCircles);
 
-        position = new float[3 * numCircles];
-        velocity = new float[3 * numCircles];
-        color = new float[3 * numCircles];
-        radius = new float[numCircles];
+    //     position = new float[3 * numCircles];
+    //     velocity = new float[3 * numCircles];
+    //     color = new float[3 * numCircles];
+    //     radius = new float[numCircles];
 
-        for (int i=0; i<numCircles; i++) {
-            int index3 = 3 * i;
-            fscanf(file, "%f %f %f   %f %f %f   %f\n",
-                   &position[index3], &position[index3+1], &position[index3+2],
-                   &velocity[index3], &velocity[index3+1], &velocity[index3+2],
-                   &radius[i]);
-        }
-        fclose(file);
-        printf("Loaded data for %d circles from %s\n", numCircles, filename);
+    //     for (int i=0; i<numCircles; i++) {
+    //         int index3 = 3 * i;
+    //         fscanf(file, "%f %f %f   %f %f %f   %f\n",
+    //                &position[index3], &position[index3+1], &position[index3+2],
+    //                &velocity[index3], &velocity[index3+1], &velocity[index3+2],
+    //                &radius[i]);
+    //     }
+    //     fclose(file);
+    //     printf("Loaded data for %d circles from %s\n", numCircles, filename);
 
+    // 
     } else if (sceneName == CIRCLE_RGB) {
 
         // simple test scene containing 3 circles. All circles have
@@ -349,7 +353,7 @@ loadCircleScene(
         //
         // farthest circle is red.  Middle is green.  Closest is blue.
 
-        numCircles =4;// 10;
+        numCircles = 6;// 10;
 
         position = new float[3 * numCircles];
         velocity = new float[3 * numCircles];
@@ -358,44 +362,26 @@ loadCircleScene(
 
         // for (int i=0; i<numCircles; i++)
         //     radius[i] = .3f;
+        std::ifstream inputFile("input-1-6x6.txt");
+        if (!inputFile.is_open())
+        {
+            std::cerr << "There was a problem with the input file, please verify that the input file is there." << std::endl;
+        }
 
-        // block 1
-        position[0] = 0;
-        position[1] = 3;
-        position[2] = 1; 
-        color[0] = .6f;
-        color[1] = .5f;
-        color[2] = .44f; 
-        radius[0] = 3;
-
-        // block 2
-        position[3] = 0;
-        position[4] = 2; 
-        position[5] = 0;
-        color[3] = .6f;
-        color[4] = .5f;
-        color[5] = .44f; 
-        radius[1] = 2;
-
-         // block 3
-        position[6] = 0;
-        position[7] = 1; 
-        position[8] = 0;
-        color[6] = .6f;
-        color[7] = .5f;
-        color[8] = .44f; 
-        radius[2] = 2;
-
-         // block 4
-        position[9] = 1;
-        position[10] = 3; 
-        position[11] = 0;
-        color[9] = .8f;
-        color[10] = .4f;
-        color[11] = .4f; 
-        radius[3] = 6;
-
-
+        int BL_x, BL_y, length;
+        char orientation;
+        int i = 0; 
+        while (inputFile >> BL_x >> BL_y >> length >> orientation) {
+            position[i] = BL_x; 
+            position[i+1] = BL_y;
+            position[i+2] = orientation == 'v' ? 1 : 0;
+            color[i] = i == 0 ? .8f : .6f; 
+            color[i+1] = i == 0 ? .4f : .5f; 
+            color[i+2] = i == 0 ? .4f : .44f; 
+            radius[i/3] = length; 
+            i += 3; 
+        }
+        inputFile.close();
 
     } else if (sceneName == CIRCLE_RGBY) {
 
