@@ -1,5 +1,7 @@
 #ifndef __CIRCLE_RENDERER_H__
 #define __CIRCLE_RENDERER_H__
+#include <cstring>
+#include <string>
 
 struct Image;
 
@@ -31,7 +33,7 @@ public:
 
     virtual void setup() = 0;
 
-    virtual void loadScene(SceneName name) = 0;
+    virtual void loadScene(SceneName name, std::string inputFileName) = 0;
 
     virtual void allocOutputImage(int width, int height) = 0;
 

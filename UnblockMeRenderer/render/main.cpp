@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <getopt.h>
 #include <string>
+#include <cstring>
 
 #include "refRenderer.h"
 #include "cudaRenderer.h"
@@ -30,145 +31,145 @@ void usage(const char* progname) {
 int main(int argc, char** argv)
 {
 
-    int benchmarkFrameStart = -1;
-    int benchmarkFrameEnd = -1;
+    // int benchmarkFrameStart = -1;
+    // int benchmarkFrameEnd = -1;
     int imageSize = 1150;
 
-    std::string sceneNameStr;
-    std::string frameFilename;
-    SceneName sceneName;
-    bool useRefRenderer = true;
+    // std::string sceneNameStr;
+    // std::string frameFilename;
+    SceneName sceneName = BLOCK;
+    // bool useRefRenderer = true;
 
-    bool checkCorrectness = false;
+    // bool checkCorrectness = false;
 
-    // parse commandline options ////////////////////////////////////////////
-    int opt;
-    static struct option long_options[] = {
-        {"help",     0, 0,  '?'},
-        {"check",    0, 0,  'c'},
-        {"bench",    1, 0,  'b'},
-        {"file",     1, 0,  'f'},
-        {"renderer", 1, 0,  'r'},
-        {"size",     1, 0,  's'},
-        {0 ,0, 0, 0}
-    };
+    // // parse commandline options ////////////////////////////////////////////
+    // int opt;
+    // static struct option long_options[] = {
+    //     {"help",     0, 0,  '?'},
+    //     {"check",    0, 0,  'c'},
+    //     {"bench",    1, 0,  'b'},
+    //     {"file",     1, 0,  'f'},
+    //     {"renderer", 1, 0,  'r'},
+    //     {"size",     1, 0,  's'},
+    //     {0 ,0, 0, 0}
+    // };
 
-    while ((opt = getopt_long(argc, argv, "b:f:r:s:c?", long_options, NULL)) != EOF) {
+    // while ((opt = getopt_long(argc, argv, "b:f:r:s:c?", long_options, NULL)) != EOF) {
 
-        switch (opt) {
-        case 'b':
-            if (sscanf(optarg, "%d:%d", &benchmarkFrameStart, &benchmarkFrameEnd) != 2) {
-                fprintf(stderr, "Invalid argument to -b option\n");
-                usage(argv[0]);
-                exit(1);
-            }
-            break;
-        case 'c':
-            checkCorrectness = true;
-            break;
-        case 'f':
-            frameFilename = optarg;
-            break;
-        case 'r':
-            if (std::string(optarg).compare("cuda") == 0) {
-                useRefRenderer = false;
-            }
-            break;
-        case 's':
-            imageSize = atoi(optarg);
-            break;
-        case '?':
-        default:
-            usage(argv[0]);
-            return 1;
-        }
-    }
-    // end parsing of commandline options //////////////////////////////////////
+    //     switch (opt) {
+    //     case 'b':
+    //         if (sscanf(optarg, "%d:%d", &benchmarkFrameStart, &benchmarkFrameEnd) != 2) {
+    //             fprintf(stderr, "Invalid argument to -b option\n");
+    //             usage(argv[0]);
+    //             exit(1);
+    //         }
+    //         break;
+    //     case 'c':
+    //         checkCorrectness = true;
+    //         break;
+    //     case 'f':
+    //         frameFilename = optarg;
+    //         break;
+    //     case 'r':
+    //         if (std::string(optarg).compare("cuda") == 0) {
+    //             useRefRenderer = false;
+    //         }
+    //         break;
+    //     case 's':
+    //         imageSize = atoi(optarg);
+    //         break;
+    //     case '?':
+    //     default:
+    //         usage(argv[0]);
+    //         return 1;
+    //     }
+    // }
+    // // end parsing of commandline options //////////////////////////////////////
 
 
-    if (optind + 1 > argc) {
-        fprintf(stderr, "Error: missing scene name\n");
-        usage(argv[0]);
-        return 1;
-    }
+    // if (optind + 1 > argc) {
+    //     fprintf(stderr, "Error: missing scene name\n");
+    //     usage(argv[0]);
+    //     return 1;
+    // }
 
-    sceneNameStr = argv[optind];
+    // sceneNameStr = argv[optind];
 
-    if (sceneNameStr.compare("block") == 0) {
-        sceneName = BLOCK;
-    } 
-    else if (sceneNameStr.compare("snow") == 0) {
-        sceneName = SNOWFLAKES;
-    } else if (sceneNameStr.compare("snowsingle") == 0) {
-        sceneName = SNOWFLAKES_SINGLE_FRAME;
-    } else if (sceneNameStr.compare("rgb") == 0) {
-        sceneName = CIRCLE_RGB;
-    } else if (sceneNameStr.compare("rgby") == 0) {
-        sceneName = CIRCLE_RGBY;
-    } else if (sceneNameStr.compare("rand10k") == 0) {
-        sceneName = CIRCLE_TEST_10K;
-    } else if (sceneNameStr.compare("rand100k") == 0) {
-        sceneName = CIRCLE_TEST_100K;
-    } else if (sceneNameStr.compare("pattern") == 0) {
-        sceneName = PATTERN;
-    } else if (sceneNameStr.compare("biglittle") == 0) {
-        sceneName = BIG_LITTLE;
-    } else if (sceneNameStr.compare("littlebig") == 0) {
-        sceneName = LITTLE_BIG;
-    } else if (sceneNameStr.compare("bouncingballs") == 0) {
-        sceneName = BOUNCING_BALLS;  
-    } else if (sceneNameStr.compare("hypnosis") == 0) { 
-        sceneName = HYPNOSIS;           
-    } else if (sceneNameStr.compare("fireworks") == 0) { 
-        sceneName = FIREWORKS;    
-    }
-    else {
-        fprintf(stderr, "Unknown scene name (%s)\n", sceneNameStr.c_str());
-        usage(argv[0]);
-        return 1;
-    }
+    // if (sceneNameStr.compare("block") == 0) {
+    //     sceneName = BLOCK;
+    // } 
+    // else if (sceneNameStr.compare("snow") == 0) {
+    //     sceneName = SNOWFLAKES;
+    // } else if (sceneNameStr.compare("snowsingle") == 0) {
+    //     sceneName = SNOWFLAKES_SINGLE_FRAME;
+    // } else if (sceneNameStr.compare("rgb") == 0) {
+    //     sceneName = CIRCLE_RGB;
+    // } else if (sceneNameStr.compare("rgby") == 0) {
+    //     sceneName = CIRCLE_RGBY;
+    // } else if (sceneNameStr.compare("rand10k") == 0) {
+    //     sceneName = CIRCLE_TEST_10K;
+    // } else if (sceneNameStr.compare("rand100k") == 0) {
+    //     sceneName = CIRCLE_TEST_100K;
+    // } else if (sceneNameStr.compare("pattern") == 0) {
+    //     sceneName = PATTERN;
+    // } else if (sceneNameStr.compare("biglittle") == 0) {
+    //     sceneName = BIG_LITTLE;
+    // } else if (sceneNameStr.compare("littlebig") == 0) {
+    //     sceneName = LITTLE_BIG;
+    // } else if (sceneNameStr.compare("bouncingballs") == 0) {
+    //     sceneName = BOUNCING_BALLS;  
+    // } else if (sceneNameStr.compare("hypnosis") == 0) { 
+    //     sceneName = HYPNOSIS;           
+    // } else if (sceneNameStr.compare("fireworks") == 0) { 
+    //     sceneName = FIREWORKS;    
+    // }
+    // else {
+    //     fprintf(stderr, "Unknown scene name (%s)\n", sceneNameStr.c_str());
+    //     usage(argv[0]);
+    //     return 1;
+    // }
 
-    printf("Rendering to %dx%d image\n", imageSize, imageSize);
+    // printf("Rendering to %dx%d image\n", imageSize, imageSize);
 
-    CircleRenderer* renderer;
+    // CircleRenderer* renderer;
 
-    if (checkCorrectness) {
+    // if (checkCorrectness) {
         // Need both the renderers
 
-        CircleRenderer* ref_renderer;
+        // CircleRenderer* ref_renderer;
         CircleRenderer* cuda_renderer;
 
-        ref_renderer = new RefRenderer();
+        // ref_renderer = new RefRenderer();
         cuda_renderer = new CudaRenderer();
 
-        ref_renderer->allocOutputImage(imageSize, imageSize);
-        ref_renderer->loadScene(sceneName);
-        ref_renderer->setup();
+        // ref_renderer->allocOutputImage(imageSize, imageSize);
+        // ref_renderer->loadScene(sceneName);
+        // ref_renderer->setup();
         cuda_renderer->allocOutputImage(imageSize, imageSize);
-        cuda_renderer->loadScene(sceneName);
+        cuda_renderer->loadScene(sceneName, "../../data/board-easy1-6x6/input.txt");
         cuda_renderer->setup();
 
         // Check the correctness
-        CheckBenchmark(ref_renderer, cuda_renderer, 0, 1, frameFilename);
-    }
-    else {
+        // CheckBenchmark(ref_renderer, cuda_renderer, 0, 1, frameFilename);
+    // }
+    // else {
 
-        if (useRefRenderer)
-            renderer = new RefRenderer();
-        else
-            renderer = new CudaRenderer();
+    //     if (useRefRenderer)
+    //         renderer = new RefRenderer();
+    //     else
+    //         renderer = new CudaRenderer();
 
-        renderer->allocOutputImage(imageSize, imageSize);
-        renderer->loadScene(sceneName);
-        renderer->setup();
+    //     renderer->allocOutputImage(imageSize, imageSize);
+    //     renderer->loadScene(sceneName);
+    //     renderer->setup();
 
-        if (benchmarkFrameStart >= 0)
-            startBenchmark(renderer, benchmarkFrameStart, benchmarkFrameEnd - benchmarkFrameStart, frameFilename);
-        else {
+    //     if (benchmarkFrameStart >= 0)
+    //         startBenchmark(renderer, benchmarkFrameStart, benchmarkFrameEnd - benchmarkFrameStart, frameFilename);
+    //     else {
             glutInit(&argc, argv);
-            startRendererWithDisplay(renderer);
-        }
-    }
+            startRendererWithDisplay(cuda_renderer);
+    //     }
+    // }
 
     return 0;
 }

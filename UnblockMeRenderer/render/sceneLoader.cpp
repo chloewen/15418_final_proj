@@ -9,6 +9,7 @@
 #include "util.h"
 #include <fstream>
 #include <cassert>
+#include <cstring>
 
 
 void
@@ -18,13 +19,15 @@ loadCircleScene(
     float*& position,
     float*& velocity,
     float*& color,
-    float*& radius)
+    float*& radius,
+    std::string inputFileName
+    )
 {
     if (sceneName == BLOCK) {
-        std::ifstream inputFile("data/input-1-6x6.txt");
+        std::ifstream inputFile(inputFileName);
         if (!inputFile.is_open())
         {
-            std::cerr << "There was a problem with the input file, please verify that the input file is there." << std::endl;
+            std::cerr << "There was a problem with the input file (" << inputFileName << "), please verify that the input file is there." << std::endl;
         }
 
         int n; 

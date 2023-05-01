@@ -210,7 +210,7 @@ __device__ int moveIndex = 0;
 // kernelAdvanceBlocks   
 //
 // Update the radius/color of the circles
-__global__ void kernelAdvanceBlocks(int* blockIndexes, int* cutoffs, char* directions) { //, int* cutoffs, char* directions) { 
+__global__ void kernelAdvanceBlocks(int numSteps, int* blockIndexes, int* cutoffs, char* directions) { //, int* cutoffs, char* directions) { 
     int index = blockIdx.x * blockDim.x + threadIdx.x;
     // (moveIndex)++; 
     if (index >= cuConstRendererParams.numberOfCircles) 
@@ -245,7 +245,7 @@ __global__ void kernelAdvanceBlocks(int* blockIndexes, int* cutoffs, char* direc
     // int blockI; int dist; char direction;
     
     // assert(moveIndexP != NULL && *moveIndexP >= 0);
-    assert(moveIndex < 3);
+    assert(moveIndex < numSteps);
     assert(moveIndex >= 0);
     if (index == 0){
         printf("moveIndex %d", moveIndex);
@@ -258,7 +258,7 @@ __global__ void kernelAdvanceBlocks(int* blockIndexes, int* cutoffs, char* direc
                 (cuConstRendererParams.position[blockI*3]) -= SPEED;
             } else {
                 (moveIndex)++;
-                if (moveIndex > 2) return;
+                if (moveIndex >= numSteps) return;
             }
         } else 
         if (direction == 'R') {
@@ -267,7 +267,7 @@ __global__ void kernelAdvanceBlocks(int* blockIndexes, int* cutoffs, char* direc
                 (cuConstRendererParams.position[blockI*3]) += SPEED;
             }else {
                 (moveIndex)++;
-                if (moveIndex > 2) return;              
+                if (moveIndex >= numSteps) return;              
             }
         } else 
         if (direction == 'D') {
@@ -276,8 +276,8 @@ __global__ void kernelAdvanceBlocks(int* blockIndexes, int* cutoffs, char* direc
                 (cuConstRendererParams.position[blockI*3+1]) -= SPEED;
             }else {
                 (moveIndex)++;
-                printf("this happened, moveIndex %d", moveIndex);
-                if (moveIndex > 2) return;
+                // printf("this happened, moveIndex %d", moveIndex);
+                if (moveIndex >= numSteps) return;
            }
         } else 
         if (direction == 'U') {
@@ -286,7 +286,7 @@ __global__ void kernelAdvanceBlocks(int* blockIndexes, int* cutoffs, char* direc
                 (cuConstRendererParams.position[blockI*3+1]) += SPEED;
             }else {
                 (moveIndex)++;
-                if (moveIndex > 2) return;
+                if (moveIndex >= numSteps) return;
             }
         }   
     }
@@ -671,9 +671,9 @@ CudaRenderer::getImage() {
 }
 
 void
-CudaRenderer::loadScene(SceneName scene) {
+CudaRenderer::loadScene(SceneName scene, std::string inputFileName) {
     sceneName = scene;
-    loadCircleScene(sceneName, numberOfCircles, position, velocity, color, radius);
+    loadCircleScene(sceneName, numberOfCircles, position, velocity, color, radius, inputFileName);
 }
 
 void
@@ -831,20 +831,21 @@ CudaRenderer::advanceAnimation() {
     // TODO: read soln file from here, populate blockIndexes, distances, directions 
 
     if (sceneName == BLOCK) {
-        std::ifstream inputFile("data/input-1-6x6-soln.txt");
-        if (!inputFile.is_open()) {
+        std::ifstream solnRawFile("../../data/board-easy1-6x6/soln-raw.txt");
+        if (!solnRawFile.is_open()) {
             std::cerr << "There was a problem with the input file, please verify that the input file is there." << std::endl;
+            return;
         }
         // int n; int numBlocks; 
         // if (inputFile >> n) {
         //     numBlocks = n;
         // }
-        int numBlocks; 
-        inputFile >> numBlocks; 
+        int numSteps; 
+        solnRawFile >> numSteps; 
 
-        int *blockIndexes = new int[numBlocks];
-        int *cutoffs = new int[numBlocks];
-        char *directions = new char[numBlocks];
+        int *blockIndexes = new int[numSteps];
+        int *cutoffs = new int[numSteps];
+        char *directions = new char[numSteps];
 
         // int blockIndexes[3] = {3, 4, 0};
         // int cutoffs[3] = {0,4,7};
@@ -852,24 +853,24 @@ CudaRenderer::advanceAnimation() {
         int i = 0; 
         int blockIndex, cutoff;
         char direction; 
-        while (inputFile >> blockIndex >> cutoff >> direction) {
+        while (solnRawFile >> blockIndex >> cutoff >> direction) {
             blockIndexes[i] = blockIndex;
             cutoffs[i] = cutoff;
             directions[i] = direction;
             i++;
         }
-        inputFile.close();
+        solnRawFile.close();
         int* deviceBlockIndexes; 
-        cudaMalloc(&deviceBlockIndexes, sizeof(int) * numBlocks); 
-        cudaMemcpy(deviceBlockIndexes, blockIndexes, sizeof(int) * numBlocks, cudaMemcpyHostToDevice);
+        cudaMalloc(&deviceBlockIndexes, sizeof(int) * numSteps); 
+        cudaMemcpy(deviceBlockIndexes, blockIndexes, sizeof(int) * numSteps, cudaMemcpyHostToDevice);
         int* deviceCutoffs; 
-        cudaMalloc(&deviceCutoffs, sizeof(int) * numBlocks); 
-        cudaMemcpy(deviceCutoffs, cutoffs, sizeof(int) * numBlocks, cudaMemcpyHostToDevice);
+        cudaMalloc(&deviceCutoffs, sizeof(int) * numSteps); 
+        cudaMemcpy(deviceCutoffs, cutoffs, sizeof(int) * numSteps, cudaMemcpyHostToDevice);
         char* deviceDirections; 
-        cudaMalloc(&deviceDirections, sizeof(char) * numBlocks); 
-        cudaMemcpy(deviceDirections, directions, sizeof(char) * numBlocks, cudaMemcpyHostToDevice);
+        cudaMalloc(&deviceDirections, sizeof(char) * numSteps); 
+        cudaMemcpy(deviceDirections, directions, sizeof(char) * numSteps, cudaMemcpyHostToDevice);
 
-        kernelAdvanceBlocks<<<gridDim, blockDim>>>(deviceBlockIndexes, deviceCutoffs, deviceDirections); // , cutoffs, directions); 
+        kernelAdvanceBlocks<<<gridDim, blockDim>>>(numSteps, deviceBlockIndexes, deviceCutoffs, deviceDirections); // , cutoffs, directions); 
 
     }
     cudaDeviceSynchronize();

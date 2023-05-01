@@ -104,6 +104,8 @@ handleKeyPress(unsigned char key, int x, int y) {
     }
 }
 
+// std::string solnRawFile = "../../data/board-easy1-6x6/soln-raw.txt";
+
 // renderPicture --
 //
 // At the reall work is done here, not in the display handler
@@ -137,7 +139,6 @@ renderPicture() {
         printf("Render:   %.3f ms\n", 1000.f * (endRenderTime - endSimTime));
     }
 }
-
 void
 startRendererWithDisplay(CircleRenderer* renderer) {
 
@@ -157,7 +158,7 @@ startRendererWithDisplay(CircleRenderer* renderer) {
 
     glutInitWindowSize(gDisplay.width, gDisplay.height);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
-    glutCreateWindow("CMU 15-418 Assignment 2 - Circle Renderer");
+    glutCreateWindow("CMU 15-418 Project UnblockMe");
     glutDisplayFunc(handleDisplay);
     glutKeyboardFunc(handleKeyPress);
     glutMainLoop();

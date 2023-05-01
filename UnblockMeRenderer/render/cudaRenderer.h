@@ -6,6 +6,8 @@
 #endif
 
 #include "circleRenderer.h"
+#include <cstring>
+
 
 
 class CudaRenderer : public CircleRenderer {
@@ -36,7 +38,7 @@ public:
 
     void setup();
 
-    void loadScene(SceneName name);
+    void loadScene(SceneName name, std::string inputFileName);
 
     void allocOutputImage(int width, int height);
 

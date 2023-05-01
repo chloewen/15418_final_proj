@@ -2,6 +2,8 @@
 #define __SCENE_LOADER_H__
 
 #include "circleRenderer.h"
+#include <cstring>
+
 
 void
 loadCircleScene(
@@ -10,6 +12,7 @@ loadCircleScene(
     float*& position,
     float*& velocity,
     float*& color,
-    float*& radius);
+    float*& radius,
+    std::string inputFileName);
 
 #endif
