@@ -4,8 +4,10 @@
 #include <math.h>
 #include <stdio.h>
 #include <vector>
-
-
+#include <stdlib.h>
+#include <getopt.h>
+#include <iostream>
+#include <fstream>
 
 #include <cuda.h>
 #include <cuda_runtime.h>
@@ -17,7 +19,9 @@
 #include "sceneLoader.h"
 #include "util.h"
 #include <cassert>
-
+#include <thrust/device_ptr.h>
+#include <thrust/device_malloc.h>
+#include <thrust/device_free.h>
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -202,16 +206,24 @@ __global__ void kernelAdvanceHypnosis() {
     }   
 }   
 
-
+__device__ int moveIndex = 0;
 // kernelAdvanceBlocks   
 //
 // Update the radius/color of the circles
-__global__ void kernelAdvanceBlocks() { 
+__global__ void kernelAdvanceBlocks(int* blockIndexes, int* cutoffs, char* directions) { //, int* cutoffs, char* directions) { 
     int index = blockIdx.x * blockDim.x + threadIdx.x;
+    // (moveIndex)++; 
     if (index >= cuConstRendererParams.numberOfCircles) 
         return; 
 
-    float* radius = cuConstRendererParams.radius; 
+    // printf("before assert");
+    // // assert(false);
+    // assert(moveIndexP != NULL);
+    // printf("*moveIndexP", *moveIndexP);
+    //  //  && *moveIndexP <= 2);
+    // printf("after assert");
+
+    // float* radius = cuConstRendererParams.radius; 
 
     // float cutOff = 0.5f;
     // // Place circle back in center after reaching threshold radisus 
@@ -223,16 +235,72 @@ __global__ void kernelAdvanceBlocks() {
     // if (index == 0) radius[index] += 0.01f; 
 
     // float3 p = *(float3*)(&cuConstRendererParams.position[index*3]);
-    float cutOff0 = 0.f; 
-    float cutOff1 = 4.f;
-    int blockI0 = 3;
-    int blockI1 = 4; 
-    if (index == 0) {
-        if ((cuConstRendererParams.position[blockI0*3+1]) > cutOff0) 
-            {cuConstRendererParams.position[blockI0*3+1] -= .25f; }
-        else if ((cuConstRendererParams.position[blockI1*3+1]) < cutOff1) 
-            {cuConstRendererParams.position[blockI1*3+1] += .25f; }
+
+    // std::ifstream inputFile("data/input-1-6x6-soln.txt");
+    // if (!inputFile.is_open())
+    // {
+    //     std::cerr << "There was a problem with the input file, please verify that the input file is there." << std::endl;
+    // // }
+    float SPEED = .25f; 
+    // int blockI; int dist; char direction;
+    
+    // assert(moveIndexP != NULL && *moveIndexP >= 0);
+    assert(moveIndex < 3);
+    assert(moveIndex >= 0);
+    if (index == 0){
+        printf("moveIndex %d", moveIndex);
+        int blockI = blockIndexes[moveIndex];
+        int cutoff = cutoffs[moveIndex];
+        char direction = directions[moveIndex];
+        if (direction == 'L') {
+            // int cutOff = cuConstRendererParams.position[blockI*3] - dist; 
+            if ((cuConstRendererParams.position[blockI*3]) > cutoff) {
+                (cuConstRendererParams.position[blockI*3]) -= SPEED;
+            } else {
+                (moveIndex)++;
+                if (moveIndex > 2) return;
+            }
+        } else 
+        if (direction == 'R') {
+            // int cutOff = cuConstRendererParams.position[blockI*3] + dist; 
+            if ((cuConstRendererParams.position[blockI*3]) < cutoff) {
+                (cuConstRendererParams.position[blockI*3]) += SPEED;
+            }else {
+                (moveIndex)++;
+                if (moveIndex > 2) return;              
+            }
+        } else 
+        if (direction == 'D') {
+            // int cutOff = 0.f; cuConstRendererParams.position[blockI*3+1] - dist; 
+            if ((cuConstRendererParams.position[blockI*3+1]) > cutoff) {
+                (cuConstRendererParams.position[blockI*3+1]) -= SPEED;
+            }else {
+                (moveIndex)++;
+                printf("this happened, moveIndex %d", moveIndex);
+                if (moveIndex > 2) return;
+           }
+        } else 
+        if (direction == 'U') {
+            // int cutOff = cuConstRendererParams.position[blockI*3+1] + dist; 
+            if ((cuConstRendererParams.position[blockI*3+1]) < cutoff) {
+                (cuConstRendererParams.position[blockI*3+1]) += SPEED;
+            }else {
+                (moveIndex)++;
+                if (moveIndex > 2) return;
+            }
+        }   
     }
+
+    // float cutOff0 = 0.f; 
+    // float cutOff1 = 4.f;
+    // int blockI0 = 3;
+    // int blockI1 = 4; 
+    // if (index == 0) {
+    //     if ((cuConstRendererParams.position[blockI0*3+1]) > cutOff0) 
+    //         {cuConstRendererParams.position[blockI0*3+1] -= .25f; }
+    //     else if ((cuConstRendererParams.position[blockI1*3+1]) < cutOff1) 
+    //         {cuConstRendererParams.position[blockI1*3+1] += .25f; }
+    // }
 }   
 
 
@@ -436,6 +504,7 @@ shadePixel(float2 pixelCenter, float3 p, float4* imagePtr, int circleIndex) {
 // resulting image will be incorrect.
 __global__ void kernelRenderCircles() {
 
+
     int index = blockIdx.x * blockDim.x + threadIdx.x;
 
     if (index >= cuConstRendererParams.numberOfCircles)
@@ -523,14 +592,14 @@ __global__ void kernelRenderCircles() {
     float invWidth = 1.f / imageWidth;
     float invHeight = 1.f / imageHeight;
 
-    if (index == 2) {
-        printf("%d \n", screenMinX);
-        printf("%d \n", screenMaxX);
-        printf("%d \n", screenMinY);
-        printf("%d \n", screenMaxY);
-        printf("%d \n", imageWidth);
-        printf("%d \n", imageHeight);
-    }
+    // if (index == 2) {
+    //     printf("%d \n", screenMinX);
+    //     printf("%d \n", screenMaxX);
+    //     printf("%d \n", screenMinY);
+    //     printf("%d \n", screenMaxY);
+    //     printf("%d \n", imageWidth);
+    //     printf("%d \n", imageHeight);
+    // }
 
     // For all pixels in the bounding box
     for (int pixelY=screenMinY; pixelY<screenMaxY; pixelY++) {
@@ -759,8 +828,49 @@ CudaRenderer::advanceAnimation() {
     // } else if (sceneName == FIREWORKS) { 
     //     kernelAdvanceFireWorks<<<gridDim, blockDim>>>(); 
     // } else 
+    // TODO: read soln file from here, populate blockIndexes, distances, directions 
+
     if (sceneName == BLOCK) {
-        kernelAdvanceBlocks<<<gridDim, blockDim>>>(); 
+        std::ifstream inputFile("data/input-1-6x6-soln.txt");
+        if (!inputFile.is_open()) {
+            std::cerr << "There was a problem with the input file, please verify that the input file is there." << std::endl;
+        }
+        // int n; int numBlocks; 
+        // if (inputFile >> n) {
+        //     numBlocks = n;
+        // }
+        int numBlocks; 
+        inputFile >> numBlocks; 
+
+        int *blockIndexes = new int[numBlocks];
+        int *cutoffs = new int[numBlocks];
+        char *directions = new char[numBlocks];
+
+        // int blockIndexes[3] = {3, 4, 0};
+        // int cutoffs[3] = {0,4,7};
+        // char directions[3] = {'D', 'U', 'R'};
+        int i = 0; 
+        int blockIndex, cutoff;
+        char direction; 
+        while (inputFile >> blockIndex >> cutoff >> direction) {
+            blockIndexes[i] = blockIndex;
+            cutoffs[i] = cutoff;
+            directions[i] = direction;
+            i++;
+        }
+        inputFile.close();
+        int* deviceBlockIndexes; 
+        cudaMalloc(&deviceBlockIndexes, sizeof(int) * numBlocks); 
+        cudaMemcpy(deviceBlockIndexes, blockIndexes, sizeof(int) * numBlocks, cudaMemcpyHostToDevice);
+        int* deviceCutoffs; 
+        cudaMalloc(&deviceCutoffs, sizeof(int) * numBlocks); 
+        cudaMemcpy(deviceCutoffs, cutoffs, sizeof(int) * numBlocks, cudaMemcpyHostToDevice);
+        char* deviceDirections; 
+        cudaMalloc(&deviceDirections, sizeof(char) * numBlocks); 
+        cudaMemcpy(deviceDirections, directions, sizeof(char) * numBlocks, cudaMemcpyHostToDevice);
+
+        kernelAdvanceBlocks<<<gridDim, blockDim>>>(deviceBlockIndexes, deviceCutoffs, deviceDirections); // , cutoffs, directions); 
+
     }
     cudaDeviceSynchronize();
 }
