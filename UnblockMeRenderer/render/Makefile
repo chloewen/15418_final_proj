@@ -2,7 +2,7 @@ EXECUTABLE := render
 LDFLAGS=-L/usr/local/cuda-11.7/lib64/ -lcudart
 CU_FILES   := cudaRenderer.cu
 CU_DEPS    :=
-CC_FILES   := main.cpp display.cpp benchmark.cpp refRenderer.cpp \
+CC_FILES   := main.cpp display.cpp benchmark.cpp \
               noise.cpp ppm.cpp sceneLoader.cpp
 LOGS	   := logs
 
@@ -27,7 +27,7 @@ LDFRAMEWORKS := $(addprefix -framework , $(FRAMEWORKS))
 
 NVCC=nvcc
 
-OBJS=$(OBJDIR)/main.o $(OBJDIR)/display.o $(OBJDIR)/benchmark.o $(OBJDIR)/refRenderer.o \
+OBJS=$(OBJDIR)/main.o $(OBJDIR)/display.o $(OBJDIR)/benchmark.o \
      $(OBJDIR)/cudaRenderer.o $(OBJDIR)/noise.o $(OBJDIR)/ppm.o $(OBJDIR)/sceneLoader.o
 
 

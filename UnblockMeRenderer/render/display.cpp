@@ -104,7 +104,7 @@ handleKeyPress(unsigned char key, int x, int y) {
     }
 }
 
-// std::string solnRawFile = "../../data/board-easy1-6x6/soln-raw.txt";
+
 
 // renderPicture --
 //

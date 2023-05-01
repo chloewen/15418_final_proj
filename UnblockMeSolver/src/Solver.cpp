@@ -1,7 +1,7 @@
 #include "Solver.h"
 #include "Board.h"
 #include "Block.h"
-#include "globals.h"
+#include "SolverGlobals.h"
 #include <vector>
 #include <tuple>
 #include <set>

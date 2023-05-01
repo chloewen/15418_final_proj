@@ -146,7 +146,7 @@ int main(int argc, char** argv)
         // ref_renderer->loadScene(sceneName);
         // ref_renderer->setup();
         cuda_renderer->allocOutputImage(imageSize, imageSize);
-        cuda_renderer->loadScene(sceneName, "../../data/board-easy1-6x6/input.txt");
+        cuda_renderer->loadScene(sceneName);
         cuda_renderer->setup();
 
         // Check the correctness

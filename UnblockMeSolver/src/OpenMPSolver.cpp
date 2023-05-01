@@ -1,7 +1,7 @@
 #include "OpenMPSolver.h"
 #include "Board.h"
 #include "Block.h"
-#include "globals.h"
+#include "SolverGlobals.h"
 #include <omp.h>
 #include <vector>
 #include <tuple>

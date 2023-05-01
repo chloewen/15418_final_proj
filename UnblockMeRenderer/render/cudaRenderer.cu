@@ -22,6 +22,7 @@
 #include <thrust/device_ptr.h>
 #include <thrust/device_malloc.h>
 #include <thrust/device_free.h>
+#include "../../globals.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -671,9 +672,9 @@ CudaRenderer::getImage() {
 }
 
 void
-CudaRenderer::loadScene(SceneName scene, std::string inputFileName) {
+CudaRenderer::loadScene(SceneName scene) {
     sceneName = scene;
-    loadCircleScene(sceneName, numberOfCircles, position, velocity, color, radius, inputFileName);
+    loadCircleScene(sceneName, numberOfCircles, position, velocity, color, radius);
 }
 
 void
@@ -831,7 +832,7 @@ CudaRenderer::advanceAnimation() {
     // TODO: read soln file from here, populate blockIndexes, distances, directions 
 
     if (sceneName == BLOCK) {
-        std::ifstream solnRawFile("../../data/board-easy1-6x6/soln-raw.txt");
+        std::ifstream solnRawFile("../../data/board-easy1-6x6/soln-raw.txt"); // outputSolnRawFileStr);
         if (!solnRawFile.is_open()) {
             std::cerr << "There was a problem with the input file, please verify that the input file is there." << std::endl;
             return;

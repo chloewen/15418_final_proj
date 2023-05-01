@@ -38,7 +38,7 @@ public:
 
     void setup();
 
-    void loadScene(SceneName name, std::string inputFileName);
+    void loadScene(SceneName name);
 
     void allocOutputImage(int width, int height);
 

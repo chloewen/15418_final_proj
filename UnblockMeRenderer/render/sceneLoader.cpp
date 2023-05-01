@@ -10,7 +10,7 @@
 #include <fstream>
 #include <cassert>
 #include <cstring>
-
+#include "../../globals.h"
 
 void
 loadCircleScene(
@@ -19,19 +19,18 @@ loadCircleScene(
     float*& position,
     float*& velocity,
     float*& color,
-    float*& radius,
-    std::string inputFileName
+    float*& radius
     )
 {
     if (sceneName == BLOCK) {
-        std::ifstream inputFile(inputFileName);
-        if (!inputFile.is_open())
+        std::ifstream inputBoardFile("../../data/board-easy1-6x6/input.txt"); // inputBoardFileStr);
+        if (!inputBoardFile.is_open())
         {
-            std::cerr << "There was a problem with the input file (" << inputFileName << "), please verify that the input file is there." << std::endl;
+            std::cerr << "There was a problem with the input file (" << "../../data/board-easy1-6x6/input.txt" << "), please verify that the input file is there." << std::endl;
         }
 
         int n; 
-        if (inputFile >> n) {
+        if (inputBoardFile >> n) {
             numCircles = n;
         }
         
@@ -43,7 +42,7 @@ loadCircleScene(
         int BL_x, BL_y, length;
         char orientation;
         int i = 0; 
-        while (inputFile >> BL_x >> BL_y >> length >> orientation) {
+        while (inputBoardFile >> BL_x >> BL_y >> length >> orientation) {
             position[i] = BL_x; 
             position[i+1] = BL_y;
             position[i+2] = orientation == 'v' ? 1 : 0;
@@ -53,7 +52,7 @@ loadCircleScene(
             radius[i/3] = length; 
             i += 3; 
         }
-        inputFile.close();
+        inputBoardFile.close();
 
     } else {
         fprintf(stderr, "Error: cann't load scene (unknown scene)\n");

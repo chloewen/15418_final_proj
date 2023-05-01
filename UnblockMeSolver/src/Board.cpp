@@ -1,6 +1,6 @@
 #include "Block.h"
 #include "Board.h"
-#include "globals.h"
+#include "SolverGlobals.h"
 #include <vector>
 #include <tuple>
 #include <cassert>
