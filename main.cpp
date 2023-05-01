@@ -10,6 +10,7 @@
 #include "UnblockMeSolver/src/Block.h"
 #include "UnblockMeRenderer/render/cudaRenderer.h"
 #include "UnblockMeRenderer/render/platformgl.h"
+#include "globals.h"
 
 // write solution to output file (pretty) output file raw (to pass into renderer)
 void printSoln(Board startingBoard, std::vector<std::tuple<int, int, char>> soln, std::ofstream *outputFileP, std::ofstream *outputFileRawP) {
@@ -65,10 +66,13 @@ int main(int argc, char *argv[])
     }
     std::string directory = argv[1];
     // argv[1] is the input file
-    std::ifstream inputFile(directory + "/input.txt");
+    std::string inputBoardFileStr = directory + "/input.txt";
+    std::ifstream inputFile(inputBoardFileStr);
     // argv[2] is the output file
-    std::ofstream outputFile(directory + "/soln.txt");
-    std::ofstream outputFileRaw(directory + "/soln-raw.txt");
+    std::string outputSolnFileStr = directory + "/soln.txt";
+    std::ofstream outputFile(outputSolnFileStr);
+    std::string outputSolnRawFileStr = directory + "/soln-raw.txt";
+    std::ofstream outputFileRaw(outputSolnRawFileStr);
     if (!inputFile.is_open())
     {
         std::cerr << "There was a problem with the input file, please verify that the input file is there." << std::endl;
