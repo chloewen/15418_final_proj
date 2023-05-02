@@ -141,11 +141,12 @@ int main(int argc, char *argv[])
 
     // write solution to output file 
     printSoln(startingBoard, soln, &outputFile, &outputFileRaw);
+
     // CircleRenderer* cuda_renderer;
     // cuda_renderer = new CudaRenderer();
     // int imageSize = 1150; 
     // cuda_renderer->allocOutputImage(imageSize, imageSize);
-    // cuda_renderer->loadScene(BLOCK, directory + "/soln-raw.txt");
+    // cuda_renderer->loadScene(BLOCK);
     // cuda_renderer->setup();
 
 

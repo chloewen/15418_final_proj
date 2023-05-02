@@ -10,7 +10,7 @@
 #include <fstream>
 #include <cassert>
 #include <cstring>
-#include "../../globals.h"
+#include "RenderGlobals.h"
 
 void
 loadCircleScene(
@@ -23,7 +23,7 @@ loadCircleScene(
     )
 {
     if (sceneName == BLOCK) {
-        std::ifstream inputBoardFile("../../data/board-easy1-6x6/input.txt"); // inputBoardFileStr);
+        std::ifstream inputBoardFile("../../data/board-expert1-6x6/input.txt");
         if (!inputBoardFile.is_open())
         {
             std::cerr << "There was a problem with the input file (" << "../../data/board-easy1-6x6/input.txt" << "), please verify that the input file is there." << std::endl;

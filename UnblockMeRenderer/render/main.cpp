@@ -7,6 +7,7 @@
 #include "refRenderer.h"
 #include "cudaRenderer.h"
 #include "platformgl.h"
+#include "RenderGlobals.h"
 
 
 void startRendererWithDisplay(CircleRenderer* renderer);
@@ -30,7 +31,10 @@ void usage(const char* progname) {
 
 int main(int argc, char** argv)
 {
-
+    // std::string directory = argv[4];
+    // std::string inputBoardFileStr2 = directory + "/input.txt";
+    // std::string outputSolnFileStr2 = directory + "/soln.txt";
+    // std::string outputSolnRawFileStr2 = directory + "/soln-raw.txt";
     // int benchmarkFrameStart = -1;
     // int benchmarkFrameEnd = -1;
     int imageSize = 1150;

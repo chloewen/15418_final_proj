@@ -22,7 +22,7 @@
 #include <thrust/device_ptr.h>
 #include <thrust/device_malloc.h>
 #include <thrust/device_free.h>
-#include "../../globals.h"
+#include "RenderGlobals.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -832,7 +832,7 @@ CudaRenderer::advanceAnimation() {
     // TODO: read soln file from here, populate blockIndexes, distances, directions 
 
     if (sceneName == BLOCK) {
-        std::ifstream solnRawFile("../../data/board-easy1-6x6/soln-raw.txt"); // outputSolnRawFileStr);
+        std::ifstream solnRawFile("../../data/board-expert1-6x6/soln-raw.txt"); // outputSolnRawFileStr2);
         if (!solnRawFile.is_open()) {
             std::cerr << "There was a problem with the input file, please verify that the input file is there." << std::endl;
             return;
