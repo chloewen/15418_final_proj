@@ -37,7 +37,7 @@ int main(int argc, char** argv)
     // std::string outputSolnRawFileStr2 = directory + "/soln-raw.txt";
     // int benchmarkFrameStart = -1;
     // int benchmarkFrameEnd = -1;
-    int imageSize = 1150;
+    int imageSize = 800;
 
     // std::string sceneNameStr;
     // std::string frameFilename;
@@ -101,7 +101,7 @@ int main(int argc, char** argv)
 
     // if (sceneNameStr.compare("block") == 0) {
     //     sceneName = BLOCK;
-    // } 
+    // }
     // else if (sceneNameStr.compare("snow") == 0) {
     //     sceneName = SNOWFLAKES;
     // } else if (sceneNameStr.compare("snowsingle") == 0) {
@@ -121,11 +121,11 @@ int main(int argc, char** argv)
     // } else if (sceneNameStr.compare("littlebig") == 0) {
     //     sceneName = LITTLE_BIG;
     // } else if (sceneNameStr.compare("bouncingballs") == 0) {
-    //     sceneName = BOUNCING_BALLS;  
-    // } else if (sceneNameStr.compare("hypnosis") == 0) { 
-    //     sceneName = HYPNOSIS;           
-    // } else if (sceneNameStr.compare("fireworks") == 0) { 
-    //     sceneName = FIREWORKS;    
+    //     sceneName = BOUNCING_BALLS;
+    // } else if (sceneNameStr.compare("hypnosis") == 0) {
+    //     sceneName = HYPNOSIS;
+    // } else if (sceneNameStr.compare("fireworks") == 0) {
+    //     sceneName = FIREWORKS;
     // }
     // else {
     //     fprintf(stderr, "Unknown scene name (%s)\n", sceneNameStr.c_str());
