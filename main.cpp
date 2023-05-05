@@ -61,7 +61,6 @@ int main(int argc, char *argv[])
     if (argc != 3)
     {
         std::cerr << "wrong number of arguments" << std::endl;
-        // TODO: make this better
         return -1;
     }
     std::string directory = argv[1];
@@ -108,17 +107,11 @@ int main(int argc, char *argv[])
     }
     std::vector<std::tuple<int, int, char>> prevMoves(0);
     Board startingBoard = Board(blocks, prevMoves);
-    // TODO: check if startingBoard is valid
     
     // solve board
     auto start = std::chrono::high_resolution_clock::now();
 
     std::vector<std::tuple<int, int, char>> soln;
-    // Solver s = Solver(startingBoard, &outputFile);
-    // soln = s.solveBFS();
-
-    // OpenMPSolver ompS = OpenMPSolver(startingBoard, &outputFile);
-    // soln = ompS.solveBFS();
     
     if (!strcmp(argv[2], "BFS-seq")) {
         Solver s = Solver(startingBoard, &outputFile);
@@ -139,16 +132,8 @@ int main(int argc, char *argv[])
     std::cout << "soln.size() " << soln.size() << std::endl;
     std::cout << "Time taken " << runningTime.count() << std::endl;
 
-    // write solution to output file 
+    // write solution to output files
     printSoln(startingBoard, soln, &outputFile, &outputFileRaw);
-
-    // CircleRenderer* cuda_renderer;
-    // cuda_renderer = new CudaRenderer();
-    // int imageSize = 1150; 
-    // cuda_renderer->allocOutputImage(imageSize, imageSize);
-    // cuda_renderer->loadScene(BLOCK);
-    // cuda_renderer->setup();
-
 
     inputFile.close();
     outputFile.close();

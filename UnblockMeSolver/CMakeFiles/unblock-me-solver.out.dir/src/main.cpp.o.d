@@ -1,5 +1,5 @@
 CMakeFiles/unblock-me-solver.out.dir/src/main.cpp.o: \
- /afs/andrew.cmu.edu/usr20/chloewen/private/15418/15418_final_proj/src/main.cpp \
+ /afs/andrew.cmu.edu/usr20/chloewen/private/15418/15418_final_proj/UnblockMeSolver/src/main.cpp \
  /usr/include/stdc-predef.h /usr/include/c++/11/fstream \
  /usr/include/c++/11/istream /usr/include/c++/11/ios \
  /usr/include/c++/11/iosfwd \
@@ -158,10 +158,10 @@ CMakeFiles/unblock-me-solver.out.dir/src/main.cpp.o: \
  /usr/include/c++/11/chrono /usr/include/c++/11/ratio \
  /usr/include/c++/11/limits /usr/include/c++/11/ctime \
  /usr/include/c++/11/bits/parse_numbers.h \
- /afs/andrew.cmu.edu/usr20/chloewen/private/15418/15418_final_proj/src/Solver.h \
- /afs/andrew.cmu.edu/usr20/chloewen/private/15418/15418_final_proj/src/Board.h \
- /afs/andrew.cmu.edu/usr20/chloewen/private/15418/15418_final_proj/src/Block.h \
+ /afs/andrew.cmu.edu/usr20/chloewen/private/15418/15418_final_proj/UnblockMeSolver/src/Solver.h \
+ /afs/andrew.cmu.edu/usr20/chloewen/private/15418/15418_final_proj/UnblockMeSolver/src/Board.h \
+ /afs/andrew.cmu.edu/usr20/chloewen/private/15418/15418_final_proj/UnblockMeSolver/src/Block.h \
  /usr/include/c++/11/deque /usr/include/c++/11/bits/stl_deque.h \
  /usr/include/c++/11/bits/deque.tcc \
- /afs/andrew.cmu.edu/usr20/chloewen/private/15418/15418_final_proj/src/OpenMPSolver.h \
+ /afs/andrew.cmu.edu/usr20/chloewen/private/15418/15418_final_proj/UnblockMeSolver/src/OpenMPSolver.h \
  /usr/include/c++/11/cstring /usr/include/string.h /usr/include/strings.h

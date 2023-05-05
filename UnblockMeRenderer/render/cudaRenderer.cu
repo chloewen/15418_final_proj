@@ -210,46 +210,16 @@ __global__ void kernelAdvanceHypnosis() {
 __device__ int moveIndex = 0;
 // kernelAdvanceBlocks   
 //
-// Update the radius/color of the circles
-__global__ void kernelAdvanceBlocks(int numSteps, int* blockIndexes, int* cutoffs, char* directions) { //, int* cutoffs, char* directions) { 
+// Update the positon of hte blocks
+__global__ void kernelAdvanceBlocks(int numSteps, int* blockIndexes, int* cutoffs, char* directions) { 
     int index = blockIdx.x * blockDim.x + threadIdx.x;
-    // (moveIndex)++; 
     if (index >= cuConstRendererParams.numberOfCircles) 
         return; 
 
-    // printf("before assert");
-    // // assert(false);
-    // assert(moveIndexP != NULL);
-    // printf("*moveIndexP", *moveIndexP);
-    //  //  && *moveIndexP <= 2);
-    // printf("after assert");
-
-    // float* radius = cuConstRendererParams.radius; 
-
-    // float cutOff = 0.5f;
-    // // Place circle back in center after reaching threshold radisus 
-    // if (radius[index] > cutOff) { 
-    //     radius[index] = 0.02f; 
-    // } else { 
-    // }   
-
-    // if (index == 0) radius[index] += 0.01f; 
-
-    // float3 p = *(float3*)(&cuConstRendererParams.position[index*3]);
-
-    // std::ifstream inputFile("data/input-1-6x6-soln.txt");
-    // if (!inputFile.is_open())
-    // {
-    //     std::cerr << "There was a problem with the input file, please verify that the input file is there." << std::endl;
-    // // }
     float SPEED = .25f; 
-    // int blockI; int dist; char direction;
-    
-    // assert(moveIndexP != NULL && *moveIndexP >= 0);
     assert(moveIndex < numSteps);
     assert(moveIndex >= 0);
     if (index == 0){
-        printf("moveIndex %d", moveIndex);
         int blockI = blockIndexes[moveIndex];
         int cutoff = cutoffs[moveIndex];
         char direction = directions[moveIndex];
@@ -263,45 +233,30 @@ __global__ void kernelAdvanceBlocks(int numSteps, int* blockIndexes, int* cutoff
             }
         } else 
         if (direction == 'R') {
-            // int cutOff = cuConstRendererParams.position[blockI*3] + dist; 
             if ((cuConstRendererParams.position[blockI*3]) < cutoff) {
                 (cuConstRendererParams.position[blockI*3]) += SPEED;
-            }else {
+            } else {
                 (moveIndex)++;
                 if (moveIndex >= numSteps) return;              
             }
         } else 
         if (direction == 'D') {
-            // int cutOff = 0.f; cuConstRendererParams.position[blockI*3+1] - dist; 
             if ((cuConstRendererParams.position[blockI*3+1]) > cutoff) {
                 (cuConstRendererParams.position[blockI*3+1]) -= SPEED;
-            }else {
+            } else {
                 (moveIndex)++;
-                // printf("this happened, moveIndex %d", moveIndex);
                 if (moveIndex >= numSteps) return;
            }
         } else 
-        if (direction == 'U') {
-            // int cutOff = cuConstRendererParams.position[blockI*3+1] + dist; 
+        if (direction == 'U') { 
             if ((cuConstRendererParams.position[blockI*3+1]) < cutoff) {
                 (cuConstRendererParams.position[blockI*3+1]) += SPEED;
-            }else {
+            } else {
                 (moveIndex)++;
                 if (moveIndex >= numSteps) return;
             }
         }   
     }
-
-    // float cutOff0 = 0.f; 
-    // float cutOff1 = 4.f;
-    // int blockI0 = 3;
-    // int blockI1 = 4; 
-    // if (index == 0) {
-    //     if ((cuConstRendererParams.position[blockI0*3+1]) > cutOff0) 
-    //         {cuConstRendererParams.position[blockI0*3+1] -= .25f; }
-    //     else if ((cuConstRendererParams.position[blockI1*3+1]) < cutOff1) 
-    //         {cuConstRendererParams.position[blockI1*3+1] += .25f; }
-    // }
 }   
 
 
@@ -436,46 +391,9 @@ __global__ void kernelAdvanceSnowflake() {
 // function.  Called by kernelRenderCircles()
 __device__ __inline__ void
 shadePixel(float2 pixelCenter, float3 p, float4* imagePtr, int circleIndex) {
-
-    float diffX = p.x - pixelCenter.x;
-    float diffY = p.y - pixelCenter.y;
-    float pixelDist = diffX * diffX + diffY * diffY;
-
-    float rad = cuConstRendererParams.radius[circleIndex];;
-    // float maxDist = rad * rad;
-
-    // // Circle does not contribute to the image
-    // if (pixelDist > maxDist)
-    //     return;
-
     float3 rgb;
     float alpha;
 
-    // There is a non-zero contribution.  Now compute the shading value
-
-    // Suggestion: This conditional is in the inner loop.  Although it
-    // will evaluate the same for all threads, there is overhead in
-    // setting up the lane masks, etc., to implement the conditional.  It
-    // would be wise to perform this logic outside of the loops in
-    // kernelRenderCircles.  (If feeling good about yourself, you
-    // // could use some specialized template magic).
-    // if (cuConstRendererParams.sceneName == SNOWFLAKES || cuConstRendererParams.sceneName == SNOWFLAKES_SINGLE_FRAME) {
-
-    //     const float kCircleMaxAlpha = .5f;
-    //     const float falloffScale = 4.f;
-
-    //     float normPixelDist = sqrt(pixelDist) / rad;
-    //     rgb = lookupColor(normPixelDist);
-
-    //     float maxAlpha = .6f + .4f * (1.f-p.z);
-    //     maxAlpha = kCircleMaxAlpha * fmaxf(fminf(maxAlpha, 1.f), 0.f); // kCircleMaxAlpha * clamped value
-    //     alpha = maxAlpha * exp(-1.f * falloffScale * normPixelDist * normPixelDist);
-
-    // } else {
-    //     // Simple: each circle has an assigned color
-    //     rgb = *(float3*)&(cuConstRendererParams.color[index3]);
-    //     alpha = .5f;
-    // }
     int index3 = 3 * circleIndex;
     rgb = *(float3*)&(cuConstRendererParams.color[index3]);
     alpha = 1.f;
@@ -541,36 +459,10 @@ __global__ void kernelRenderCircles() {
     assert (maxXNorm > minXNorm);
     assert (maxYNorm > minYNorm);
 
-    // assert (maxXNorm <= 1);
-    // assert (maxXNorm >= 0);
-    // assert (maxYNorm <= 1);
-    // assert (maxYNorm >= 0);
-    // assert (minXNorm <= 1);
-    // assert (minXNorm >= 0);
-    // assert (minYNorm <= 1);
-    // assert (minYNorm >= 0);
-
-
-
     short minX = static_cast<short>(imageWidth * minXNorm);
     short minY = static_cast<short>(imageHeight * minYNorm);
     short maxX = static_cast<short>(imageWidth * maxXNorm);
     short maxY = static_cast<short>(imageHeight * maxYNorm);
-
-
-    // int numBordersX = p.x == 0  ? 0 : p.x-1;
-    // short minX = static_cast<short>(imageWidth * (p.x * .15f + numBordersX * .01f)); // static_cast<short>(imageWidth * (p.x - rad));
-    // int numBlocksY = p.y;
-    // int numBordersY = p.y == 0  ? 0 : p.y-1;
-    // short minY = static_cast<short>(imageHeight * (p.y * .15f + numBordersY * .01f));  // static_cast<short>(imageHeight * (p.y + rad)) + 1;
-    // short maxX; short maxY; 
-    // if (p.z == 1.f) { // vertical 
-    //     maxX = static_cast<short>(imageWidth  * (p.x+ 1) * .15f ); // static_cast<short>(imageWidth * (p.x + rad)) + 1;
-    //     maxY = static_cast<short>(imageHeight * ((p.y + rad) * .15f)); // static_cast<short>(imageHeight * (p.y - rad));
-    // } else { // horizontal
-    //     maxX = static_cast<short>(imageWidth * ((p.x + rad) * .15f)); // static_cast<short>(imageWidth * (p.x + rad)) + 1;
-    //     maxY = static_cast<short>(imageHeight * ((p.y + 1) * .15f)); // static_cast<short>(imageHeight * (p.y - rad));
-    // }
 
     // A bunch of clamps.  Is there a CUDA built-in for this?
     short screenMinX = (minX > 0) ? ((minX < imageWidth) ? minX : imageWidth) : 0;
@@ -819,28 +711,12 @@ CudaRenderer::advanceAnimation() {
     dim3 blockDim(256, 1);
     dim3 gridDim((numberOfCircles + blockDim.x - 1) / blockDim.x);
 
-    // only the snowflake scene has animation
-    // if (sceneName == SNOWFLAKES) {
-    //     kernelAdvanceSnowflake<<<gridDim, blockDim>>>();
-    // } else if (sceneName == BOUNCING_BALLS) {
-    //     kernelAdvanceBouncingBalls<<<gridDim, blockDim>>>();
-    // } else if (sceneName == HYPNOSIS) {
-    //     kernelAdvanceHypnosis<<<gridDim, blockDim>>>();
-    // } else if (sceneName == FIREWORKS) { 
-    //     kernelAdvanceFireWorks<<<gridDim, blockDim>>>(); 
-    // } else 
-    // TODO: read soln file from here, populate blockIndexes, distances, directions 
-
     if (sceneName == BLOCK) {
-        std::ifstream solnRawFile("../../data/board-expert1-6x6/soln-raw.txt"); // outputSolnRawFileStr2);
+        std::ifstream solnRawFile("../../data/board-expert1-6x6/soln-raw.txt"); 
         if (!solnRawFile.is_open()) {
             std::cerr << "There was a problem with the input file, please verify that the input file is there." << std::endl;
             return;
         }
-        // int n; int numBlocks; 
-        // if (inputFile >> n) {
-        //     numBlocks = n;
-        // }
         int numSteps; 
         solnRawFile >> numSteps; 
 
@@ -848,9 +724,6 @@ CudaRenderer::advanceAnimation() {
         int *cutoffs = new int[numSteps];
         char *directions = new char[numSteps];
 
-        // int blockIndexes[3] = {3, 4, 0};
-        // int cutoffs[3] = {0,4,7};
-        // char directions[3] = {'D', 'U', 'R'};
         int i = 0; 
         int blockIndex, cutoff;
         char direction; 
@@ -871,7 +744,7 @@ CudaRenderer::advanceAnimation() {
         cudaMalloc(&deviceDirections, sizeof(char) * numSteps); 
         cudaMemcpy(deviceDirections, directions, sizeof(char) * numSteps, cudaMemcpyHostToDevice);
 
-        kernelAdvanceBlocks<<<gridDim, blockDim>>>(numSteps, deviceBlockIndexes, deviceCutoffs, deviceDirections); // , cutoffs, directions); 
+        kernelAdvanceBlocks<<<gridDim, blockDim>>>(numSteps, deviceBlockIndexes, deviceCutoffs, deviceDirections);  
 
     }
     cudaDeviceSynchronize();

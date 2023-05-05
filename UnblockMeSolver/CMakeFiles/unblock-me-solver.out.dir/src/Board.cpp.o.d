@@ -1,8 +1,8 @@
 CMakeFiles/unblock-me-solver.out.dir/src/Board.cpp.o: \
- /afs/andrew.cmu.edu/usr20/chloewen/private/15418/15418_final_proj/src/Board.cpp \
+ /afs/andrew.cmu.edu/usr20/chloewen/private/15418/15418_final_proj/UnblockMeSolver/src/Board.cpp \
  /usr/include/stdc-predef.h \
- /afs/andrew.cmu.edu/usr20/chloewen/private/15418/15418_final_proj/src/Block.h \
- /afs/andrew.cmu.edu/usr20/chloewen/private/15418/15418_final_proj/src/Board.h \
+ /afs/andrew.cmu.edu/usr20/chloewen/private/15418/15418_final_proj/UnblockMeSolver/src/Block.h \
+ /afs/andrew.cmu.edu/usr20/chloewen/private/15418/15418_final_proj/UnblockMeSolver/src/Board.h \
  /usr/include/c++/11/vector /usr/include/c++/11/bits/stl_algobase.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/os_defines.h \
@@ -153,7 +153,7 @@ CMakeFiles/unblock-me-solver.out.dir/src/Board.cpp.o: \
  /usr/include/c++/11/bits/basic_ios.tcc \
  /usr/include/c++/11/bits/ostream.tcc /usr/include/c++/11/istream \
  /usr/include/c++/11/bits/istream.tcc \
- /afs/andrew.cmu.edu/usr20/chloewen/private/15418/15418_final_proj/src/globals.h \
+ /afs/andrew.cmu.edu/usr20/chloewen/private/15418/15418_final_proj/UnblockMeSolver/src/globals.h \
  /usr/include/c++/11/cassert /usr/include/assert.h \
  /usr/include/c++/11/fstream /usr/include/c++/11/bits/codecvt.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/basic_file.h \

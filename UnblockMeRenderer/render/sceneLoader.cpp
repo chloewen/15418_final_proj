@@ -26,7 +26,7 @@ loadCircleScene(
         std::ifstream inputBoardFile("../../data/board-expert1-6x6/input.txt");
         if (!inputBoardFile.is_open())
         {
-            std::cerr << "There was a problem with the input file (" << "../../data/board-easy1-6x6/input.txt" << "), please verify that the input file is there." << std::endl;
+            std::cerr << "There was a problem with the board input file, please verify that the input file is there." << std::endl;
         }
 
         int n; 

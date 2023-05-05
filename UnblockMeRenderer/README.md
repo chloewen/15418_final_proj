@@ -1,14 +1,35 @@
 # CMU 15-418/618, Spring 2023
 
-# Assignment 2
+# Unblock Me Renderer 
 
-This is the starter code for Assignment 2 of CMU class 15-418/618, Spring 2023
+To run solver: 
+in the main directory, run:
+make
+./solver [input file directory] [parallel or sequential]
+[input file directory] = 
+data/board/easy1-6x6
+data/board/easy2-6x6
+data/board/easy3-6x6
+data/board/med1-6x6
+data/board/med2-6x6
+data/board/med3-6x6
+data/board/adv1-6x6
+data/board/adv2-6x6
+data/board/adv3-6x6
+data/board/expert1-6x6
+data/board/expert2-6x6
+data/board/expert3-6x6
 
-Please review the course's policy on [academic
-integrity](http://www.cs.cmu.edu/~418/academicintegrity.html),
-regarding your obligation to keep your own solutions private from now
-until eternity.
+[parallel or sequential] = 
+BFS-seq
+BFS-par-OMP
 
+To run renderer: 
+change input file in cudaRenderer.cu to "../../[input file directory]/soln-raw.txt" on line 722
+change input file in sceneLoader.cpp to "../../[input file directory]/input.txt"
+in UnblockMeRenderer/render, run: 
+make 
+./render -r cuda block
 
 
 

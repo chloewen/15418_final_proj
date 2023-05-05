@@ -1,0 +1,4 @@
+- clean up code 
+- make code in main directory to link solver and render (move stuff from solver/main.cpp)
+- make file for solver to make with openMP or not
+- animation
